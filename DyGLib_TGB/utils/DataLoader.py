@@ -5,6 +5,7 @@ from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
 from tgb.linkproppred.dataset import LinkPropPredDataset
 from tgb.nodeproppred.dataset_pyg import PyGNodePropPredDataset
+import pandas as pd
 
 
 class CustomizedDataset(Dataset):
@@ -106,9 +107,33 @@ def get_link_prediction_tgb_data(dataset_name: str):
     dataset = LinkPropPredDataset(name=dataset_name, root="datasets", preprocess=True)
     data = dataset.full_data
 
-    src_node_ids = data['sources'].astype(np.longlong)
-    dst_node_ids = data['destinations'].astype(np.longlong)
-    node_interact_times = data['timestamps'].astype(np.float64)
+
+    data_df = pd.DataFrame([data['sources'], data['destinations'], data['timestamps'], data['edge_idxs'], data['edge_label'], data['edge_feat']]).T
+    data_df.columns = ['source', 'destination', 'timestamp', 'edge_idxs', 'edge_label', 'edge_feat']
+    data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], unit='s')
+
+    data_df['Year'] = data_df['timestamp'].dt.year
+    # most_common_year = data_df['Year'].value_counts().idxmax()
+    most_common_year = 2010
+
+    start_date = pd.Timestamp(year=most_common_year, month=1, day=1)
+    end_date = pd.Timestamp(year=most_common_year, month=6, day=30)
+    df_filtered = data_df[(data_df['timestamp'] >= start_date) & (data_df['timestamp'] <= end_date)]
+
+    df_filtered['YearWeek'] = df_filtered['timestamp'].dt.to_period('W')
+
+    def check_weekly_occurrences(group):
+        expected_weeks = pd.date_range(start=start_date, end=end_date, freq='W-MON').nunique()
+        unique_weeks = group['YearWeek'].nunique()
+        return unique_weeks == expected_weeks / 2
+
+    weekly_occurrences = df_filtered.groupby(['source', 'destination']).filter(check_weekly_occurrences)
+
+    data = weekly_occurrences.drop_duplicates(subset=['source', 'destination'])
+
+    src_node_ids = data['source'].astype(np.longlong)
+    dst_node_ids = data['destination'].astype(np.longlong)
+    node_interact_times = data['timestamp'].astype(np.float64)
     edge_ids = data['edge_idxs'].astype(np.longlong)
     labels = data['edge_label']
     edge_raw_features = data['edge_feat'].astype(np.float64)
