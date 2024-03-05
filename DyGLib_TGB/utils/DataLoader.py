@@ -133,10 +133,10 @@ def get_link_prediction_tgb_data(dataset_name: str):
 
     src_node_ids = data['source'].astype(np.longlong)
     dst_node_ids = data['destination'].astype(np.longlong)
-    node_interact_times = data['timestamp'].astype(np.float64)
+    node_interact_times = data['timestamp'].view('int64') / 1e9
     edge_ids = data['edge_idxs'].astype(np.longlong)
     labels = data['edge_label']
-    edge_raw_features = data['edge_feat'].astype(np.float64)
+    # edge_raw_features = np.array(padded_data, dtype=np.float64)
     # deal with edge features whose shape has only one dimension
     if len(edge_raw_features.shape) == 1:
         edge_raw_features = edge_raw_features[:, np.newaxis]
