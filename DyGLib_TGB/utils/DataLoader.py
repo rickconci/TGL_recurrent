@@ -112,20 +112,19 @@ def get_link_prediction_tgb_data(dataset_name: str):
     data_df.columns = ['source', 'destination', 'timestamp', 'edge_idxs', 'edge_label', 'edge_feat']
     data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], unit='s')
 
-    data_df['Year'] = data_df['timestamp'].dt.year
-    # most_common_year = data_df['Year'].value_counts().idxmax()
-    most_common_year = 2010
-
-    start_date = pd.Timestamp(year=most_common_year, month=1, day=1)
-    end_date = pd.Timestamp(year=most_common_year, month=6, day=30)
-    df_filtered = data_df[(data_df['timestamp'] >= start_date) & (data_df['timestamp'] <= end_date)]
+    split_index = int(len(data_df) * 0.7)
+    train_data_df = data_df.iloc[:split_index]
+    window_date_start = train_data_df['timestamp'].max()
+    time_difference = pd.Timedelta(days=287, hours=11, minutes=20) + pd.DateOffset(years=3)
+    window_date_end = window_date_start - time_difference
+    df_filtered = data_df[(data_df['timestamp'] >= window_date_end) & (data_df['timestamp'] <= window_date_start)]
 
     df_filtered['YearWeek'] = df_filtered['timestamp'].dt.to_period('W')
 
     def check_weekly_occurrences(group):
-        expected_weeks = pd.date_range(start=start_date, end=end_date, freq='W-MON').nunique()
+        expected_weeks = pd.date_range(start=window_date_start, end=window_date_end, freq='W-MON').nunique()
         unique_weeks = group['YearWeek'].nunique()
-        return unique_weeks == expected_weeks / 2
+        return unique_weeks == expected_weeks / 4
 
     weekly_occurrences = df_filtered.groupby(['source', 'destination']).filter(check_weekly_occurrences)
 
