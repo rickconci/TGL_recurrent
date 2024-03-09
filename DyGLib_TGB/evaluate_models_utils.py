@@ -52,18 +52,21 @@ def evaluate_model_link_prediction(model_name: str, model: nn.Module, neighbor_s
         for batch_idx, evaluate_data_indices in enumerate(evaluate_idx_data_loader_tqdm):
             evaluate_data_indices = evaluate_data_indices.numpy()
             batch_src_node_ids, batch_dst_node_ids, batch_node_interact_times, batch_edge_ids = \
-                evaluate_data.src_node_ids.to_list()[evaluate_data_indices[0]:len(evaluate_data_indices)],  evaluate_data.dst_node_ids.to_list()[evaluate_data_indices[0]:len(evaluate_data_indices)], \
-                evaluate_data.node_interact_times.to_list()[evaluate_data_indices[0]:len(evaluate_data_indices)], evaluate_data.edge_ids.to_list()[evaluate_data_indices[0]:len(evaluate_data_indices)]
+                evaluate_data.src_node_ids[evaluate_data_indices],  evaluate_data.dst_node_ids[evaluate_data_indices], \
+                evaluate_data.node_interact_times[evaluate_data_indices], evaluate_data.edge_ids[evaluate_data_indices]
 
             # batch_neg_dst_node_ids_list: a list of list, where each internal list contains the ids of negative destination nodes for a positive source node
             # contain batch lists, each list with length num_negative_samples_per_node (20 in the TGB evaluation)
             # we should pay attention to the mappings of node ids, reduce 1 to convert to the original node ids
-            batch_neg_dst_node_ids_list = evaluate_neg_edge_sampler.query_batch(pos_src=torch.tensor([x - 1 for x in batch_src_node_ids]), pos_dst=torch.tensor([x - 1 for x in batch_dst_node_ids]),
-                                                                                    pos_timestamp=torch.tensor(batch_node_interact_times), split_mode=eval_stage)
+            batch_neg_dst_node_ids_list = evaluate_neg_edge_sampler.query_batch(pos_src=batch_src_node_ids - 1, pos_dst=batch_dst_node_ids - 1,
+                                                                                pos_timestamp=batch_node_interact_times, split_mode=eval_stage)
 
             # ndarray, shape (batch_size, num_negative_samples_per_node)
             # we should pay attention to the mappings of node ids, add 1 to convert to the mapped node ids in our implementation
-            batch_neg_dst_node_ids = np.array(batch_neg_dst_node_ids_list) + 1
+            try:
+                batch_neg_dst_node_ids = np.array(batch_neg_dst_node_ids_list) + 1
+            except:
+                pass
 
             num_negative_samples_per_node = batch_neg_dst_node_ids.shape[1]
             # ndarray, shape (batch_size * num_negative_samples_per_node, ),
