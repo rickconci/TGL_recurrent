@@ -25,6 +25,7 @@ from evaluate_models_utils import evaluate_model_link_prediction
 from utils.DataLoader import get_idx_data_loader, get_link_prediction_tgb_data
 from utils.EarlyStopping import EarlyStopping
 from utils.load_configs import get_link_prediction_args
+import pickle
 
 if __name__ == "__main__":
 
@@ -51,12 +52,12 @@ if __name__ == "__main__":
     # get data loaders
     train_idx_data_loader = get_idx_data_loader(indices_list=list(range(len(train_data.src_node_ids))), batch_size=args.batch_size, shuffle=False)
     # since the version 2 of tgbl-wiki has included all possible negative destinations for each positive edge, we set batch size to 1 to reduce the memory cost
-    if args.dataset_name == "tgbl-wiki":
-        val_idx_data_loader = get_idx_data_loader(indices_list=list(range(len(val_data.src_node_ids))), batch_size=1, shuffle=False)
-        test_idx_data_loader = get_idx_data_loader(indices_list=list(range(len(test_data.src_node_ids))), batch_size=1, shuffle=False)
-    else:
-        val_idx_data_loader = get_idx_data_loader(indices_list=list(range(len(val_data.src_node_ids))), batch_size=args.batch_size, shuffle=False)
-        test_idx_data_loader = get_idx_data_loader(indices_list=list(range(len(test_data.src_node_ids))), batch_size=args.batch_size, shuffle=False)
+    # if args.dataset_name == "tgbl-wiki":
+    #     val_idx_data_loader = get_idx_data_loader(indices_list=list(range(len(val_data.src_node_ids))), batch_size=1, shuffle=False)
+    #     test_idx_data_loader = get_idx_data_loader(indices_list=list(range(len(test_data.src_node_ids))), batch_size=1, shuffle=False)
+    # else:
+    val_idx_data_loader = get_idx_data_loader(indices_list=list(range(len(val_data.src_node_ids))), batch_size=args.batch_size, shuffle=False)
+    test_idx_data_loader = get_idx_data_loader(indices_list=list(range(len(test_data.src_node_ids))), batch_size=args.batch_size, shuffle=False)
 
     val_metric_all_runs, test_metric_all_runs = [], []
 
@@ -95,7 +96,7 @@ if __name__ == "__main__":
         if args.model_name == 'TGAT':
             dynamic_backbone = TGAT(node_raw_features=node_raw_features, edge_raw_features=edge_raw_features, neighbor_sampler=train_neighbor_sampler,
                                     time_feat_dim=args.time_feat_dim, output_dim=args.output_dim, num_layers=args.num_layers, num_heads=args.num_heads,
-                                    dropout=args.dropout, device=args.device)
+                                    dropout=args.dropout, device='cpu')
         elif args.model_name in ['JODIE', 'DyRep', 'TGN']:
             # four floats that represent the mean and standard deviation of source and destination node time shifts in the training data, which is used for JODIE
             src_node_mean_time_shift, src_node_std_time_shift, dst_node_mean_time_shift_dst, dst_node_std_time_shift = \
@@ -103,24 +104,24 @@ if __name__ == "__main__":
             dynamic_backbone = MemoryModel(node_raw_features=node_raw_features, edge_raw_features=edge_raw_features, neighbor_sampler=train_neighbor_sampler,
                                            time_feat_dim=args.time_feat_dim, output_dim=args.output_dim, model_name=args.model_name, num_layers=args.num_layers, num_heads=args.num_heads,
                                            dropout=args.dropout, src_node_mean_time_shift=src_node_mean_time_shift, src_node_std_time_shift=src_node_std_time_shift,
-                                           dst_node_mean_time_shift_dst=dst_node_mean_time_shift_dst, dst_node_std_time_shift=dst_node_std_time_shift, device=args.device)
+                                           dst_node_mean_time_shift_dst=dst_node_mean_time_shift_dst, dst_node_std_time_shift=dst_node_std_time_shift, device='cpu')
         elif args.model_name == 'CAWN':
             dynamic_backbone = CAWN(node_raw_features=node_raw_features, edge_raw_features=edge_raw_features, neighbor_sampler=train_neighbor_sampler,
                                     time_feat_dim=args.time_feat_dim, position_feat_dim=args.position_feat_dim, output_dim=args.output_dim, walk_length=args.walk_length,
-                                    num_walk_heads=args.num_walk_heads, dropout=args.dropout, device=args.device)
+                                    num_walk_heads=args.num_walk_heads, dropout=args.dropout, device='cpu')
         elif args.model_name == 'TCL':
             dynamic_backbone = TCL(node_raw_features=node_raw_features, edge_raw_features=edge_raw_features, neighbor_sampler=train_neighbor_sampler,
                                    time_feat_dim=args.time_feat_dim, output_dim=args.output_dim, num_layers=args.num_layers, num_heads=args.num_heads,
-                                   num_depths=args.num_neighbors + 1, dropout=args.dropout, device=args.device)
+                                   num_depths=args.num_neighbors + 1, dropout=args.dropout, device='cpu')
         elif args.model_name == 'GraphMixer':
             dynamic_backbone = GraphMixer(node_raw_features=node_raw_features, edge_raw_features=edge_raw_features, neighbor_sampler=train_neighbor_sampler,
                                           time_feat_dim=args.time_feat_dim, output_dim=args.output_dim, num_tokens=args.num_neighbors, num_layers=args.num_layers,
-                                          dropout=args.dropout, device=args.device)
+                                          dropout=args.dropout, device='cpu')
         elif args.model_name == 'DyGFormer':
             dynamic_backbone = DyGFormer(node_raw_features=node_raw_features, edge_raw_features=edge_raw_features, neighbor_sampler=train_neighbor_sampler,
                                          time_feat_dim=args.time_feat_dim, channel_embedding_dim=args.channel_embedding_dim, output_dim=args.output_dim,
                                          patch_size=args.patch_size, num_layers=args.num_layers, num_heads=args.num_heads, dropout=args.dropout,
-                                         max_input_sequence_length=args.max_input_sequence_length, device=args.device)
+                                         max_input_sequence_length=args.max_input_sequence_length, device='cpu')
         else:
             raise ValueError(f"Wrong value for model_name {args.model_name}!")
         link_predictor = MergeLayer(input_dim1=args.output_dim, input_dim2=args.output_dim, hidden_dim=args.output_dim, output_dim=1)
@@ -131,7 +132,7 @@ if __name__ == "__main__":
 
         optimizer = create_optimizer(model=model, optimizer_name=args.optimizer, learning_rate=args.learning_rate, weight_decay=args.weight_decay)
 
-        model = convert_to_gpu(model, device=args.device)
+        model = convert_to_gpu(model, device='cpu')
 
         save_model_folder = f"./saved_models/{args.model_name}/{args.dataset_name}/{args.save_model_name}/"
         shutil.rmtree(save_model_folder, ignore_errors=True)
@@ -263,17 +264,6 @@ if __name__ == "__main__":
                     # detach the memories and raw messages of nodes in the memory bank after each batch, so we don't back propagate to the start of time
                     model[0].memory_bank.detach_memory_bank()
 
-            val_metrics = evaluate_model_link_prediction(model_name=args.model_name,
-                                                         model=model,
-                                                         neighbor_sampler=full_neighbor_sampler,
-                                                         evaluate_idx_data_loader=val_idx_data_loader,
-                                                         evaluate_neg_edge_sampler=eval_neg_edge_sampler,
-                                                         evaluate_data=val_data,
-                                                         eval_stage='val',
-                                                         eval_metric_name=eval_metric_name,
-                                                         evaluator=evaluator,
-                                                         num_neighbors=args.num_neighbors,
-                                                         time_gap=args.time_gap)
 
             if args.model_name in ['JODIE', 'DyRep', 'TGN']:
                 # backup memory bank after validating so it can be used for testing nodes (since test edges are strictly later in time than validation edges)
@@ -282,49 +272,8 @@ if __name__ == "__main__":
             logger.info(f'Epoch: {epoch + 1}, learning rate: {optimizer.param_groups[0]["lr"]}, train loss: {np.mean(train_losses):.4f}')
             for metric_name in train_metrics[0].keys():
                 logger.info(f'train {metric_name}, {np.mean([train_metric[metric_name] for train_metric in train_metrics]):.4f}')
-            for metric_name in val_metrics[0].keys():
-                logger.info(f'validate {metric_name}, {np.mean([val_metric[metric_name] for val_metric in val_metrics]):.4f}')
 
-            # perform testing once after test_interval_epochs
-            if (epoch + 1) % args.test_interval_epochs == 0:
-                test_metrics = evaluate_model_link_prediction(model_name=args.model_name,
-                                                              model=model,
-                                                              neighbor_sampler=full_neighbor_sampler,
-                                                              evaluate_idx_data_loader=test_idx_data_loader,
-                                                              evaluate_neg_edge_sampler=eval_neg_edge_sampler,
-                                                              evaluate_data=test_data,
-                                                              eval_stage='test',
-                                                              eval_metric_name=eval_metric_name,
-                                                              evaluator=evaluator,
-                                                              num_neighbors=args.num_neighbors,
-                                                              time_gap=args.time_gap)
-
-                if args.model_name in ['JODIE', 'DyRep', 'TGN']:
-                    # reload validation memory bank for testing nodes or saving models
-                    # note that since model treats memory as parameters, we need to reload the memory to val_backup_memory_bank for saving models
-                    model[0].memory_bank.reload_memory_bank(val_backup_memory_bank)
-
-                for metric_name in test_metrics[0].keys():
-                    logger.info(f'test {metric_name}, {np.mean([test_metric[metric_name] for test_metric in test_metrics]):.4f}')
-
-            # select the best model based on all the validate metrics
-            val_metric_indicator = []
-            for metric_name in val_metrics[0].keys():
-                val_metric_indicator.append((metric_name, np.mean([val_metric[metric_name] for val_metric in val_metrics]), True))
-            early_stop = early_stopping.step(val_metric_indicator, model)
-
-            if early_stop:
-                break
-
-        # load the best model
-        early_stopping.load_checkpoint(model)
-
-        # evaluate the best model
-        logger.info(f'get final performance on dataset {args.dataset_name}...')
-
-        # the saved best model of memory-based models cannot perform validation since the stored memory has been updated by validation data
-        if args.model_name not in ['JODIE', 'DyRep', 'TGN']:
-            val_metrics = evaluate_model_link_prediction(model_name=args.model_name,
+        val_metrics = evaluate_model_link_prediction(model_name=args.model_name,
                                                          model=model,
                                                          neighbor_sampler=full_neighbor_sampler,
                                                          evaluate_idx_data_loader=val_idx_data_loader,
@@ -336,75 +285,11 @@ if __name__ == "__main__":
                                                          num_neighbors=args.num_neighbors,
                                                          time_gap=args.time_gap)
 
-        test_metrics = evaluate_model_link_prediction(model_name=args.model_name,
-                                                      model=model,
-                                                      neighbor_sampler=full_neighbor_sampler,
-                                                      evaluate_idx_data_loader=test_idx_data_loader,
-                                                      evaluate_neg_edge_sampler=eval_neg_edge_sampler,
-                                                      evaluate_data=test_data,
-                                                      eval_stage='test',
-                                                      eval_metric_name=eval_metric_name,
-                                                      evaluator=evaluator,
-                                                      num_neighbors=args.num_neighbors,
-                                                      time_gap=args.time_gap)
-
-        # store the evaluation metrics at the current run
-        val_metric_dict, test_metric_dict = {}, {}
-
-        if args.model_name not in ['JODIE', 'DyRep', 'TGN']:
-            for metric_name in val_metrics[0].keys():
-                average_val_metric = np.mean([val_metric[metric_name] for val_metric in val_metrics])
-                logger.info(f'validate {metric_name}, {average_val_metric:.4f}')
-                val_metric_dict[metric_name] = average_val_metric
-
-        for metric_name in test_metrics[0].keys():
-            average_test_metric = np.mean([test_metric[metric_name] for test_metric in test_metrics])
-            logger.info(f'test {metric_name}, {average_test_metric:.4f}')
-            test_metric_dict[metric_name] = average_test_metric
-
-        single_run_time = time.time() - run_start_time
-        logger.info(f'Run {run + 1} cost {single_run_time:.2f} seconds.')
-
-        if args.model_name not in ['JODIE', 'DyRep', 'TGN']:
-            val_metric_all_runs.append(val_metric_dict)
-        test_metric_all_runs.append(test_metric_dict)
-
-        # avoid the overlap of logs
-        if run < args.num_runs - 1:
-            logger.removeHandler(fh)
-            logger.removeHandler(ch)
-
-        # save model result
-        if args.model_name not in ['JODIE', 'DyRep', 'TGN']:
-            result_json = {
-                "validate metrics": {metric_name: f'{val_metric_dict[metric_name]:.4f}' for metric_name in val_metric_dict},
-                "test metrics": {metric_name: f'{test_metric_dict[metric_name]:.4f}' for metric_name in test_metric_dict}
-            }
-        else:
-            result_json = {
-                "test metrics": {metric_name: f'{test_metric_dict[metric_name]:.4f}' for metric_name in test_metric_dict}
-            }
-        result_json = json.dumps(result_json, indent=4)
-
-        save_result_folder = f"./saved_results/{args.model_name}/{args.dataset_name}"
-        os.makedirs(save_result_folder, exist_ok=True)
-        save_result_path = os.path.join(save_result_folder, f"{args.save_model_name}.json")
-
-        with open(save_result_path, 'w') as file:
-            file.write(result_json)
-
-    # store the average metrics at the log of the last run
-    logger.info(f'metrics over {args.num_runs} runs:')
-
-    if args.model_name not in ['JODIE', 'DyRep', 'TGN']:
-        for metric_name in val_metric_all_runs[0].keys():
-            logger.info(f'validate {metric_name}, {[val_metric_single_run[metric_name] for val_metric_single_run in val_metric_all_runs]}')
-            logger.info(f'average validate {metric_name}, {np.mean([val_metric_single_run[metric_name] for val_metric_single_run in val_metric_all_runs]):.4f} '
-                        f'± {np.std([val_metric_single_run[metric_name] for val_metric_single_run in val_metric_all_runs], ddof=1):.4f}')
-
-    for metric_name in test_metric_all_runs[0].keys():
-        logger.info(f'test {metric_name}, {[test_metric_single_run[metric_name] for test_metric_single_run in test_metric_all_runs]}')
-        logger.info(f'average test {metric_name}, {np.mean([test_metric_single_run[metric_name] for test_metric_single_run in test_metric_all_runs]):.4f} '
-                    f'± {np.std([test_metric_single_run[metric_name] for test_metric_single_run in test_metric_all_runs], ddof=1):.4f}')
+        for metric_name in val_metrics[0].keys():
+                logger.info(f'validate {metric_name}, {np.mean([val_metric[metric_name] for val_metric in val_metrics]):.4f}')
+        # save model
+        save_model_folder = f"./saved_models/{args.model_name}/{args.dataset_name}/{args.load_model_name}.pkl"
+        with open(save_model_folder, 'wb') as file:
+            pickle.dump(model, file)
 
     sys.exit()

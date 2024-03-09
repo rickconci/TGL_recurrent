@@ -138,6 +138,8 @@ class NeighborSampler:
         """
         # return index i, which satisfies list[i - 1] < v <= list[i]
         # return 0 for the first position in self.nodes_neighbor_times since the value at the first position is empty
+        if node_id == len(self.nodes_neighbor_times):
+            node_id = node_id-1
         i = np.searchsorted(self.nodes_neighbor_times[node_id], interact_time)
 
         if return_sampled_probabilities:

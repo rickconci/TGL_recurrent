@@ -234,6 +234,10 @@ class DyGFormer(nn.Module):
         padded_nodes_neighbor_times = np.zeros((len(node_ids), max_seq_length)).astype(np.float32)
 
         for idx in range(len(node_ids)):
+            if not isinstance(node_ids, list):
+                node_ids = node_ids.tolist()
+            if not isinstance(node_interact_times, list):
+                node_interact_times = node_interact_times.tolist()
             padded_nodes_neighbor_ids[idx, 0] = node_ids[idx]
             padded_nodes_edge_ids[idx, 0] = 0
             padded_nodes_neighbor_times[idx, 0] = node_interact_times[idx]
@@ -258,10 +262,17 @@ class DyGFormer(nn.Module):
         :return:
         """
         # Tensor, shape (batch_size, max_seq_length, node_feat_dim)
-        padded_nodes_neighbor_node_raw_features = self.node_raw_features[torch.from_numpy(padded_nodes_neighbor_ids)]
+        max_index = self.node_raw_features.size(0) - 1  # Maximum valid index
+        valid_indices = torch.clamp(torch.from_numpy(padded_nodes_neighbor_ids), max=max_index)
+        padded_nodes_neighbor_node_raw_features = self.node_raw_features[valid_indices]
         # Tensor, shape (batch_size, max_seq_length, edge_feat_dim)
-        padded_nodes_edge_raw_features = self.edge_raw_features[torch.from_numpy(padded_nodes_edge_ids)]
+        max_index = self.edge_raw_features.size(0) - 1  # Maximum valid index
+        valid_indices = torch.clamp(torch.from_numpy(padded_nodes_edge_ids), max=max_index)
+        padded_nodes_edge_raw_features = self.edge_raw_features[valid_indices]
         # Tensor, shape (batch_size, max_seq_length, time_feat_dim)
+        node_interact_times = np.array(node_interact_times)  # Convert list to NumPy array
+
+        # Now you can use NumPy indexing
         padded_nodes_neighbor_time_features = time_encoder(timestamps=torch.from_numpy(node_interact_times[:, np.newaxis] - padded_nodes_neighbor_times).float().to(self.device))
 
         # ndarray, set the time features to all zeros for the padded timestamp
