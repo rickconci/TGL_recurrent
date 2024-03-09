@@ -138,19 +138,19 @@ def get_link_prediction_tgb_data(dataset_name: str):
     # Filter original dataset to keep only common pairs
     train_data_df = df_filtered.merge(common_pairs, on=['source', 'destination'])
     train_data_df = train_data_df.drop_duplicates(subset=['source', 'destination'])
-    validation_data_df = pd.merge(train_data_df[['source', 'destination']], validation_data_df, on=['source', 'destination'], how='inner')
+    # validation_data_df = pd.merge(train_data_df[['source', 'destination']], validation_data_df, on=['source', 'destination'], how='inner')
 
     train_ratio = train_data_df.size / (validation_data_df.size + train_data_df.size)
     val_ratio = (validation_data_df.size / (validation_data_df.size + train_data_df.size))/2
     data = pd.concat([train_data_df, validation_data_df], ignore_index=True)
     print(f'Size after processing recurrent pairs: {data.size}')
 
-    src_node_ids = data['source'].astype(np.longlong)
-    dst_node_ids = data['destination'].astype(np.longlong)
-    node_interact_times = data['timestamp'].view('int64') / 1e9
-    edge_ids = data['edge_idxs'].astype(np.longlong)
-    labels = data['edge_label']
-    edge_raw_features = np.array([[np.mean(seq).astype(np.float64)] for seq in data['edge_feat']])
+    src_node_ids = data['source'].to_numpy().astype(np.longlong)
+    dst_node_ids = data['destination'].to_numpy().astype(np.longlong)
+    node_interact_times = data['timestamp'].to_numpy().view('int64') / 1e9
+    edge_ids = data['edge_idxs'].to_numpy().astype(np.longlong)
+    labels = data['edge_label'].to_numpy()
+    edge_raw_features = np.array([[np.mean(seq).astype(np.float64)] for seq in data['edge_feat'].to_numpy()])
     # deal with edge features whose shape has only one dimension
 
     # union to get node set

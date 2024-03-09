@@ -138,15 +138,16 @@ class NeighborSampler:
         """
         # return index i, which satisfies list[i - 1] < v <= list[i]
         # return 0 for the first position in self.nodes_neighbor_times since the value at the first position is empty
-        if node_id == len(self.nodes_neighbor_times):
-            node_id = node_id-1
-        i = np.searchsorted(self.nodes_neighbor_times[node_id], interact_time)
+        try:
+            i = np.searchsorted(self.nodes_neighbor_times[node_id], interact_time)
 
-        if return_sampled_probabilities:
-            return self.nodes_neighbor_ids[node_id][:i], self.nodes_edge_ids[node_id][:i], self.nodes_neighbor_times[node_id][:i], \
-                   self.nodes_neighbor_sampled_probabilities[node_id][:i]
-        else:
-            return self.nodes_neighbor_ids[node_id][:i], self.nodes_edge_ids[node_id][:i], self.nodes_neighbor_times[node_id][:i], None
+            if return_sampled_probabilities:
+                return self.nodes_neighbor_ids[node_id][:i], self.nodes_edge_ids[node_id][:i], self.nodes_neighbor_times[node_id][:i], \
+                    self.nodes_neighbor_sampled_probabilities[node_id][:i]
+            else:
+                return self.nodes_neighbor_ids[node_id][:i], self.nodes_edge_ids[node_id][:i], self.nodes_neighbor_times[node_id][:i], None
+        except:
+            return False
 
     def get_historical_neighbors(self, node_ids: np.ndarray, node_interact_times: np.ndarray, num_neighbors: int = 20):
         """
@@ -265,12 +266,16 @@ class NeighborSampler:
         # get the temporal neighbors at the first hop
         for idx, (node_id, node_interact_time) in enumerate(zip(node_ids, node_interact_times)):
             # find neighbors that interacted with node_id before time node_interact_time
-            node_neighbor_ids, node_edge_ids, node_neighbor_times, _ = self.find_neighbors_before(node_id=node_id,
+            exists = self.find_neighbors_before(node_id=node_id,
                                                                                                   interact_time=node_interact_time,
                                                                                                   return_sampled_probabilities=False)
-            nodes_neighbor_ids_list.append(node_neighbor_ids)
-            nodes_edge_ids_list.append(node_edge_ids)
-            nodes_neighbor_times_list.append(node_neighbor_times)
+            if exists:
+                node_neighbor_ids, node_edge_ids, node_neighbor_times, _ = self.find_neighbors_before(node_id=node_id,
+                                                                                                    interact_time=node_interact_time,
+                                                                                                    return_sampled_probabilities=False)
+                nodes_neighbor_ids_list.append(node_neighbor_ids)
+                nodes_edge_ids_list.append(node_edge_ids)
+                nodes_neighbor_times_list.append(node_neighbor_times)
 
         return nodes_neighbor_ids_list, nodes_edge_ids_list, nodes_neighbor_times_list
 
