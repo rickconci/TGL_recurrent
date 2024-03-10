@@ -6,6 +6,8 @@ from torch.utils.data import Dataset, DataLoader
 from tgb.linkproppred.dataset import LinkPropPredDataset
 from tgb.nodeproppred.dataset_pyg import PyGNodePropPredDataset
 import pandas as pd
+from tgb.linkproppred.negative_generator import NegativeEdgeGenerator
+from tgb.linkproppred.negative_sampler import NegativeEdgeSampler
 
 
 class CustomizedDataset(Dataset):
@@ -72,6 +74,31 @@ class Data:
         self.unique_node_ids = set(src_node_ids) | set(dst_node_ids)
         self.num_unique_nodes = len(self.unique_node_ids)
 
+class Data1:
+
+    def __init__(self, src_node_ids: np.ndarray, dst_node_ids: np.ndarray, node_interact_times: np.ndarray, edge_ids: np.ndarray,
+                 labels: np.ndarray, interact_types: np.ndarray = None, node_label_times: np.ndarray = None):
+        """
+        Data object to store the nodes interaction information.
+        :param src_node_ids: ndarray
+        :param dst_node_ids: ndarray
+        :param node_interact_times: ndarray
+        :param edge_ids: ndarray
+        :param labels: ndarray
+        :param interact_types: ndarray, its element can be "train", "validate", "test" or "just_update"
+        :param node_label_times: ndarray, record the labeled time of nodes (nodes without labels are noted by the interact time)
+        """
+        self.src = src_node_ids
+        self.dst = dst_node_ids
+        self.t = node_interact_times
+        self.edge_ids = edge_ids
+        self.labels = labels
+        self.interact_types = interact_types
+        self.node_label_times = node_label_times
+        self.num_interactions = len(src_node_ids)
+        self.unique_node_ids = set(src_node_ids) | set(dst_node_ids)
+        self.num_unique_nodes = len(self.unique_node_ids)
+
 
 data_num_nodes_map = {
     "tgbl-wiki": 9227,
@@ -118,6 +145,7 @@ def get_link_prediction_tgb_data(dataset_name: str):
     years = 0
     time_difference = pd.Timedelta(days=15 + (365*years), hours=6, minutes=29)
     window_date_end = window_date_start - time_difference
+    window_date_start = validation_data_df['timestamp'].max()
     df_filtered = data_df[(data_df['timestamp'] >= window_date_end) & (data_df['timestamp'] <= window_date_start)]
 
     df_filtered['YearWeek'] = df_filtered['timestamp'].dt.to_period('W')
@@ -132,17 +160,15 @@ def get_link_prediction_tgb_data(dataset_name: str):
     pairs_first_week = first_week_pairs.groupby(['source', 'destination']).size().reset_index(name='Counts')
     pairs_second_week = second_week_pairs.groupby(['source', 'destination']).size().reset_index(name='Counts')
 
-    # Merge to find common pairs
     common_pairs = pd.merge(pairs_first_week[['source', 'destination']], pairs_second_week[['source', 'destination']], on=['source', 'destination'])
 
-    # Filter original dataset to keep only common pairs
-    train_data_df = df_filtered.merge(common_pairs, on=['source', 'destination'])
-    train_data_df = train_data_df.drop_duplicates(subset=['source', 'destination'])
+    recurrent_data_df = df_filtered.merge(common_pairs, on=['source', 'destination'])
+    data = recurrent_data_df.drop_duplicates(subset=['source', 'destination'])
     # validation_data_df = pd.merge(train_data_df[['source', 'destination']], validation_data_df, on=['source', 'destination'], how='inner')
 
-    train_ratio = train_data_df.size / (validation_data_df.size + train_data_df.size)
-    val_ratio = (validation_data_df.size / (validation_data_df.size + train_data_df.size))/2
-    data = pd.concat([train_data_df, validation_data_df], ignore_index=True)
+    train_ratio = 0.7
+    val_ratio = 0.15
+    # data = pd.concat([train_data_df, validation_data_df], ignore_index=True)
     print(f'Size after processing recurrent pairs: {data.size}')
 
     src_node_ids = data['source'].to_numpy().astype(np.longlong)
@@ -153,12 +179,19 @@ def get_link_prediction_tgb_data(dataset_name: str):
     edge_raw_features = np.array([[np.mean(seq).astype(np.float64)] for seq in data['edge_feat'].to_numpy()])
     # deal with edge features whose shape has only one dimension
 
+    full_data = Data1(src_node_ids=src_node_ids, dst_node_ids=dst_node_ids, node_interact_times=node_interact_times, edge_ids=edge_ids, labels=labels)
+    eval_neg_edge_generator = NegativeEdgeGenerator('Custom_wiki', dst_node_ids[0], dst_node_ids[len(dst_node_ids)-1])
+    path = '/Users/kiril.bikov/University/Lent Term/L65 Geometric Deep Learning/TGL_recurrent/DyGLib_TGB/neg_samplers'
+    eval_neg_edge_generator.generate_negative_samples(full_data, 'val', path)
+    eval_neg_edge_sampler = NegativeEdgeSampler('Custom_wiki')
+    eval_neg_edge_sampler.load_eval_set(path+'/Custom_wiki_val_ns.pkl')
+
     # union to get node set
     num_nodes = len(set(src_node_ids) | set(dst_node_ids))
 
-    eval_neg_edge_sampler = dataset.negative_sampler
-    dataset.load_val_ns()
-    dataset.load_test_ns()
+    # eval_neg_edge_sampler = dataset.negative_sampler
+    # dataset.load_val_ns()
+    # dataset.load_test_ns()
     eval_metric_name = dataset.eval_metric
 
     # note that in our data preprocess pipeline, we add an extra node and edge with index 0 as the padded node/edge for convenience of model computation,

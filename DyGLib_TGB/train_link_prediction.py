@@ -288,8 +288,8 @@ if __name__ == "__main__":
         for metric_name in val_metrics[0].keys():
                 logger.info(f'validate {metric_name}, {np.mean([val_metric[metric_name] for val_metric in val_metrics]):.4f}')
         # save model
-        save_model_folder = f"./saved_models/{args.model_name}/{args.dataset_name}/{args.load_model_name}.pkl"
-        with open(save_model_folder, 'wb') as file:
-            pickle.dump(model, file)
+        # save_model_folder = f"./saved_models/{args.model_name}/{args.dataset_name}/{args.load_model_name}.pkl"
+        # with open(save_model_folder, 'wb') as file:
+        #     pickle.dump(model, file)
 
     sys.exit()
