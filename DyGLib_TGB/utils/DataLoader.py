@@ -6,6 +6,8 @@ from torch.utils.data import Dataset, DataLoader
 from tgb.linkproppred.dataset import LinkPropPredDataset
 from tgb.nodeproppred.dataset_pyg import PyGNodePropPredDataset
 import pandas as pd
+from tgb.linkproppred.negative_generator import NegativeEdgeGenerator
+from tgb.linkproppred.negative_sampler import NegativeEdgeSampler
 
 
 class CustomizedDataset(Dataset):
@@ -72,6 +74,31 @@ class Data:
         self.unique_node_ids = set(src_node_ids) | set(dst_node_ids)
         self.num_unique_nodes = len(self.unique_node_ids)
 
+class Data1:
+
+    def __init__(self, src_node_ids: np.ndarray, dst_node_ids: np.ndarray, node_interact_times: np.ndarray, edge_ids: np.ndarray,
+                 labels: np.ndarray, interact_types: np.ndarray = None, node_label_times: np.ndarray = None):
+        """
+        Data object to store the nodes interaction information.
+        :param src_node_ids: ndarray
+        :param dst_node_ids: ndarray
+        :param node_interact_times: ndarray
+        :param edge_ids: ndarray
+        :param labels: ndarray
+        :param interact_types: ndarray, its element can be "train", "validate", "test" or "just_update"
+        :param node_label_times: ndarray, record the labeled time of nodes (nodes without labels are noted by the interact time)
+        """
+        self.src = src_node_ids
+        self.dst = dst_node_ids
+        self.t = node_interact_times
+        self.edge_ids = edge_ids
+        self.labels = labels
+        self.interact_types = interact_types
+        self.node_label_times = node_label_times
+        self.num_interactions = len(src_node_ids)
+        self.unique_node_ids = set(src_node_ids) | set(dst_node_ids)
+        self.num_unique_nodes = len(self.unique_node_ids)
+
 
 data_num_nodes_map = {
     "tgbl-wiki": 9227,
@@ -107,62 +134,64 @@ def get_link_prediction_tgb_data(dataset_name: str):
     dataset = LinkPropPredDataset(name=dataset_name, root="datasets", preprocess=True)
     data = dataset.full_data
 
-
     data_df = pd.DataFrame([data['sources'], data['destinations'], data['timestamps'], data['edge_idxs'], data['edge_label'], data['edge_feat']]).T
     data_df.columns = ['source', 'destination', 'timestamp', 'edge_idxs', 'edge_label', 'edge_feat']
     data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], unit='s')
 
     split_index = int(len(data_df) * 0.7)
     train_data_df = data_df.iloc[:split_index]
+    validation_data_df = data_df.iloc[split_index:]
     window_date_start = train_data_df['timestamp'].max()
-    time_difference = pd.Timedelta(days=287, hours=11, minutes=20) + pd.DateOffset(years=3)
+    years = 0
+    time_difference = pd.Timedelta(days=15 + (365*years), hours=6, minutes=29)
     window_date_end = window_date_start - time_difference
+    window_date_start = validation_data_df['timestamp'].max()
     df_filtered = data_df[(data_df['timestamp'] >= window_date_end) & (data_df['timestamp'] <= window_date_start)]
 
     df_filtered['YearWeek'] = df_filtered['timestamp'].dt.to_period('W')
 
-    def check_weekly_occurrences(group):
-        expected_weeks = pd.date_range(start=window_date_start, end=window_date_end, freq='W-MON').nunique()
-        unique_weeks = group['YearWeek'].nunique()
-        return unique_weeks == expected_weeks / 4
+    start_date = df_filtered['timestamp'].min()
+    end_first_week = start_date + pd.Timedelta(days=7)
+    end_second_week = start_date + pd.Timedelta(days=14)
 
-    weekly_occurrences = df_filtered.groupby(['source', 'destination']).filter(check_weekly_occurrences)
+    first_week_pairs = df_filtered[(df_filtered['timestamp'] >= start_date) & (df_filtered['timestamp'] <= end_first_week)]
+    second_week_pairs = df_filtered[(df_filtered['timestamp'] > end_first_week) & (df_filtered['timestamp'] <= end_second_week)]
 
-    data = weekly_occurrences.drop_duplicates(subset=['source', 'destination'])
+    pairs_first_week = first_week_pairs.groupby(['source', 'destination']).size().reset_index(name='Counts')
+    pairs_second_week = second_week_pairs.groupby(['source', 'destination']).size().reset_index(name='Counts')
 
-    src_node_ids = data['source'].astype(np.longlong)
-    dst_node_ids = data['destination'].astype(np.longlong)
-    node_interact_times = data['timestamp'].view('int64') / 1e9
-    edge_ids = data['edge_idxs'].astype(np.longlong)
-    labels = data['edge_label']
-    # edge_raw_features = np.array(padded_data, dtype=np.float64)
+    common_pairs = pd.merge(pairs_first_week[['source', 'destination']], pairs_second_week[['source', 'destination']], on=['source', 'destination'])
+
+    recurrent_data_df = df_filtered.merge(common_pairs, on=['source', 'destination'])
+    data = recurrent_data_df.drop_duplicates(subset=['source', 'destination'])
+    # validation_data_df = pd.merge(train_data_df[['source', 'destination']], validation_data_df, on=['source', 'destination'], how='inner')
+
+    train_ratio = 0.7
+    val_ratio = 0.15
+    # data = pd.concat([train_data_df, validation_data_df], ignore_index=True)
+    print(f'Size after processing recurrent pairs: {data.size}')
+
+    src_node_ids = data['source'].to_numpy().astype(np.longlong)
+    dst_node_ids = data['destination'].to_numpy().astype(np.longlong)
+    node_interact_times = data['timestamp'].to_numpy().view('int64') / 1e9
+    edge_ids = data['edge_idxs'].to_numpy().astype(np.longlong)
+    labels = data['edge_label'].to_numpy()
+    edge_raw_features = np.array([[np.mean(seq).astype(np.float64)] for seq in data['edge_feat'].to_numpy()])
     # deal with edge features whose shape has only one dimension
-    if len(edge_raw_features.shape) == 1:
-        edge_raw_features = edge_raw_features[:, np.newaxis]
-    # currently, we do not consider edge weights
-    # edge_weights = data['w'].astype(np.float64)
 
-    num_edges = edge_raw_features.shape[0]
-    assert num_edges == data_num_edges_map[dataset_name], 'Number of edges are not matched!'
+    full_data = Data1(src_node_ids=src_node_ids, dst_node_ids=dst_node_ids, node_interact_times=node_interact_times, edge_ids=edge_ids, labels=labels)
+    eval_neg_edge_generator = NegativeEdgeGenerator('Custom_wiki', dst_node_ids[0], dst_node_ids[len(dst_node_ids)-1])
+    path = '/Users/kiril.bikov/University/Lent Term/L65 Geometric Deep Learning/TGL_recurrent/DyGLib_TGB/neg_samplers'
+    eval_neg_edge_generator.generate_negative_samples(full_data, 'val', path)
+    eval_neg_edge_sampler = NegativeEdgeSampler('Custom_wiki')
+    eval_neg_edge_sampler.load_eval_set(path+'/Custom_wiki_val_ns.pkl')
 
     # union to get node set
     num_nodes = len(set(src_node_ids) | set(dst_node_ids))
-    assert num_nodes == data_num_nodes_map[dataset_name], 'Number of nodes are not matched!'
 
-    assert src_node_ids.min() == 0 or dst_node_ids.min() == 0, "Node index should start from 0!"
-    assert edge_ids.min() == 0 or edge_ids.min() == 1, "Edge index should start from 0 or 1!"
-    # we notice that the edge id on the datasets (except for tgbl-wiki) starts from 1, so we manually minus the edge ids by 1
-    if edge_ids.min() == 1:
-        print(f"Manually minus the edge indices by 1 on {dataset_name}")
-        edge_ids = edge_ids - 1
-    assert edge_ids.min() == 0, "After correction, edge index should start from 0!"
-
-    train_mask = dataset.train_mask
-    val_mask = dataset.val_mask
-    test_mask = dataset.test_mask
-    eval_neg_edge_sampler = dataset.negative_sampler
-    dataset.load_val_ns()
-    dataset.load_test_ns()
+    # eval_neg_edge_sampler = dataset.negative_sampler
+    # dataset.load_val_ns()
+    # dataset.load_test_ns()
     eval_metric_name = dataset.eval_metric
 
     # note that in our data preprocess pipeline, we add an extra node and edge with index 0 as the padded node/edge for convenience of model computation,
@@ -187,6 +216,22 @@ def get_link_prediction_tgb_data(dataset_name: str):
     assert MAX_FEAT_DIM >= node_raw_features.shape[1], f'Node feature dimension in dataset {dataset_name} is bigger than {MAX_FEAT_DIM}!'
     assert MAX_FEAT_DIM >= edge_raw_features.shape[1], f'Edge feature dimension in dataset {dataset_name} is bigger than {MAX_FEAT_DIM}!'
 
+    def create_boolean_list(size, ratios, bool_list = [False, True, False]):
+        if sum(ratios) != 1:
+            raise ValueError("The sum of ratios must be 1.")
+
+        num_elements = [int(size * ratio) for ratio in ratios]
+
+        num_elements[-1] += size - sum(num_elements)
+
+        boolean_list = [bool_list[0]] * num_elements[0] + [bool_list[1]] * num_elements[1] + [bool_list[2]] * num_elements[2]
+
+        return boolean_list
+
+    ratios=[train_ratio, val_ratio, val_ratio]
+    train_mask = create_boolean_list(src_node_ids.size, ratios, [True, False, False])
+    val_mask = create_boolean_list(src_node_ids.size, ratios, [False, True, False])
+    test_mask = create_boolean_list(src_node_ids.size, ratios, [False, False, True])
     full_data = Data(src_node_ids=src_node_ids, dst_node_ids=dst_node_ids, node_interact_times=node_interact_times, edge_ids=edge_ids, labels=labels)
     train_data = Data(src_node_ids=src_node_ids[train_mask], dst_node_ids=dst_node_ids[train_mask],
                       node_interact_times=node_interact_times[train_mask], edge_ids=edge_ids[train_mask], labels=labels[train_mask])

@@ -63,7 +63,10 @@ def evaluate_model_link_prediction(model_name: str, model: nn.Module, neighbor_s
 
             # ndarray, shape (batch_size, num_negative_samples_per_node)
             # we should pay attention to the mappings of node ids, add 1 to convert to the mapped node ids in our implementation
-            batch_neg_dst_node_ids = np.array(batch_neg_dst_node_ids_list) + 1
+            try:
+                batch_neg_dst_node_ids = np.array(batch_neg_dst_node_ids_list) + 1
+            except:
+                pass
 
             num_negative_samples_per_node = batch_neg_dst_node_ids.shape[1]
             # ndarray, shape (batch_size * num_negative_samples_per_node, ),
