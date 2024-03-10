@@ -97,7 +97,17 @@ class GraphMixer(nn.Module):
                                                            num_neighbors=num_neighbors)
 
         # Tensor, shape (batch_size, num_neighbors, edge_feat_dim)
-        nodes_edge_raw_features = self.edge_raw_features[torch.from_numpy(neighbor_edge_ids)]
+        neighbor_edge_ids_tensor = torch.from_numpy(neighbor_edge_ids)
+
+        # Maximum valid index for self.edge_raw_features
+        max_index = self.edge_raw_features.size(0) - 1
+
+        # Clamp the indices to ensure they are within the valid range
+        valid_indices = torch.clamp(neighbor_edge_ids_tensor, max=max_index)
+
+        # Use the valid_indices to index into self.edge_raw_features
+        nodes_edge_raw_features = self.edge_raw_features[valid_indices]
+
         # Tensor, shape (batch_size, num_neighbors, time_feat_dim)
         nodes_neighbor_time_features = self.time_encoder(timestamps=torch.from_numpy(node_interact_times[:, np.newaxis] - neighbor_times).float().to(self.device))
 
@@ -124,7 +134,16 @@ class GraphMixer(nn.Module):
                                                                                           num_neighbors=time_gap)
 
         # Tensor, shape (batch_size, time_gap, node_feat_dim)
-        nodes_time_gap_neighbor_node_raw_features = self.node_raw_features[torch.from_numpy(time_gap_neighbor_node_ids)]
+        time_gap_neighbor_node_ids_tensor = torch.from_numpy(time_gap_neighbor_node_ids)
+
+        # Determine the maximum valid index for self.node_raw_features
+        max_index = self.node_raw_features.size(0) - 1
+
+        # Clamp the indices to ensure they are within the valid range
+        valid_indices = torch.clamp(time_gap_neighbor_node_ids_tensor, max=max_index)
+
+        # Use the clamped, valid indices to safely index into self.node_raw_features
+        nodes_time_gap_neighbor_node_raw_features = self.node_raw_features[valid_indices]
 
         # Tensor, shape (batch_size, time_gap)
         valid_time_gap_neighbor_node_ids_mask = torch.from_numpy((time_gap_neighbor_node_ids > 0).astype(np.float32))
@@ -139,7 +158,17 @@ class GraphMixer(nn.Module):
         nodes_time_gap_neighbor_node_agg_features = torch.mean(nodes_time_gap_neighbor_node_raw_features * scores.unsqueeze(dim=-1), dim=1)
 
         # Tensor, shape (batch_size, node_feat_dim), add features of nodes in node_ids
-        output_node_features = nodes_time_gap_neighbor_node_agg_features + self.node_raw_features[torch.from_numpy(node_ids)]
+
+        if isinstance(node_ids, np.ndarray):
+            node_ids_tensor = torch.from_numpy(node_ids)
+            # Ensure all node_ids are within the valid range before indexing
+            max_index = self.node_raw_features.size(0) - 1  # Get the maximum valid index
+            if torch.all(node_ids_tensor <= max_index):
+                output_node_features = nodes_time_gap_neighbor_node_agg_features + self.node_raw_features[node_ids_tensor]
+            else:
+                output_node_features = nodes_time_gap_neighbor_node_agg_features
+        else:
+            output_node_features = nodes_time_gap_neighbor_node_agg_features + self.node_raw_features[node_ids.numpy()]
 
         # Tensor, shape (batch_size, output_dim)
         node_embeddings = self.output_layer(torch.cat([combined_features, output_node_features], dim=1))
