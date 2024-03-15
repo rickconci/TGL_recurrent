@@ -138,50 +138,6 @@ def get_link_prediction_tgb_data(dataset_name: str):
     data_df.columns = ['source', 'destination', 'timestamp', 'edge_idxs', 'edge_label', 'edge_feat']
     data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], unit='s')
 
-    split_index = int(len(data_df) * 0.7)
-    split_index_val = int(len(data_df) * 0.85)
-    train_data_df = data_df.iloc[:split_index]
-    validation_data_df = data_df.iloc[split_index:split_index_val]
-    window_date_start = train_data_df['timestamp'].max()
-    years = 0
-    time_difference = pd.Timedelta(days=15 + (365*years), hours=6, minutes=29)
-    window_date_end = window_date_start - time_difference
-    window_date_start = validation_data_df['timestamp'].max()
-    df_filtered = data_df[(data_df['timestamp'] >= window_date_end) & (data_df['timestamp'] <= window_date_start)]
-    df_filtered['YearWeek'] = df_filtered['timestamp'].dt.to_period('W')
-
-    start_date = df_filtered['timestamp'].min()
-    end_date = df_filtered['timestamp'].max()
-
-    # Calculate the total number of weeks
-    total_weeks = (end_date - start_date).days // 7 + 1
-
-    weekly_pairs = []
-
-    for week in range(total_weeks):
-        start = start_date + pd.Timedelta(days=7*week)
-        end = min(start_date + pd.Timedelta(days=7*(week+1)), end_date)
-
-        week_pairs = df_filtered[(df_filtered['timestamp'] >= start) & (df_filtered['timestamp'] <= end)]
-        pairs_count = week_pairs.groupby(['source', 'destination']).size().reset_index(name=f'Week_{week+1}_Counts')
-
-        # No need to filter for frequency; include all pairs that occur
-        weekly_pairs.append(pairs_count)
-
-    # Assuming there's at least one week of data to avoid empty list errors
-    common_pairs = weekly_pairs[0][['source', 'destination']]
-    for week_pairs in weekly_pairs[1:]:
-        common_pairs = pd.merge(common_pairs, week_pairs[['source', 'destination']], on=['source', 'destination'], how='inner')
-
-    # Merge to get recurrent data across weeks
-    recurrent_data_df = df_filtered.merge(common_pairs, on=['source', 'destination'])
-    data = recurrent_data_df.drop_duplicates(subset=['source', 'destination'])
-
-    train_ratio = 0.7
-    val_ratio = 0.15
-    # data = pd.concat([train_data_df, validation_data_df], ignore_index=True)
-    print(f'Size after processing recurrent pairs: {data.size}')
-
     src_node_ids = data['source'].to_numpy().astype(np.longlong)
     dst_node_ids = data['destination'].to_numpy().astype(np.longlong)
     node_interact_times = data['timestamp'].to_numpy().view('int64') / 1e9

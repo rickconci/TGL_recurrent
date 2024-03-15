@@ -1,0 +1,141 @@
+2024-03-15 00:59:33,450 - root - INFO - ********** Run 2 starts. **********
+2024-03-15 00:59:33,450 - root - INFO - configuration is Namespace(dataset_name='tgbl-synthetic', batch_size=200, model_name='GraphMixer', gpu=0, num_neighbors=32, sample_neighbor_strategy='recent', time_scaling_factor=1e-06, num_walk_heads=8, num_heads=2, num_layers=2, walk_length=1, time_gap=32, time_feat_dim=100, position_feat_dim=172, output_dim=172, edge_bank_memory_mode='unlimited_memory', time_window_mode='fixed_proportion', patch_size=1, channel_embedding_dim=50, max_input_sequence_length=32, learning_rate=0.0001, dropout=0.1, num_epochs=20, optimizer='Adam', weight_decay=0.0, patience=20, num_runs=3, test_interval_epochs=10, load_best_configs=False, device='cpu', seed=1, save_model_name='GraphMixer_seed1')
+2024-03-15 00:59:33,453 - root - INFO - model -> Sequential(
+  (0): GraphMixer(
+    (time_encoder): TimeEncoder(
+      (w): Linear(in_features=1, out_features=100, bias=True)
+    )
+    (projection_layer): Linear(in_features=101, out_features=172, bias=True)
+    (mlp_mixers): ModuleList(
+      (0-1): 2 x MLPMixer(
+        (token_norm): LayerNorm((32,), eps=1e-05, elementwise_affine=True)
+        (token_feedforward): FeedForwardNet(
+          (ffn): Sequential(
+            (0): Linear(in_features=32, out_features=16, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.1, inplace=False)
+            (3): Linear(in_features=16, out_features=32, bias=True)
+            (4): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (channel_norm): LayerNorm((172,), eps=1e-05, elementwise_affine=True)
+        (channel_feedforward): FeedForwardNet(
+          (ffn): Sequential(
+            (0): Linear(in_features=172, out_features=688, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.1, inplace=False)
+            (3): Linear(in_features=688, out_features=172, bias=True)
+            (4): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+    )
+    (output_layer): Linear(in_features=173, out_features=172, bias=True)
+  )
+  (1): MergeLayer(
+    (fc1): Linear(in_features=344, out_features=172, bias=True)
+    (fc2): Linear(in_features=172, out_features=1, bias=True)
+    (act): ReLU()
+  )
+)
+2024-03-15 00:59:33,453 - root - INFO - model name: GraphMixer, #parameters: 2340036 B, 2285.19140625 KB, 2.2316322326660156 MB.
+2024-03-15 00:59:43,576 - root - INFO - Epoch: 1, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:59:43,576 - root - INFO - train average_precision, 0.5119
+2024-03-15 00:59:43,576 - root - INFO - train roc_auc, 0.5036
+2024-03-15 00:59:43,576 - root - INFO - validate mrr, 0.2072
+2024-03-15 00:59:43,577 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 00:59:53,757 - root - INFO - Epoch: 2, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 00:59:53,757 - root - INFO - train average_precision, 0.5106
+2024-03-15 00:59:53,757 - root - INFO - train roc_auc, 0.5014
+2024-03-15 00:59:53,757 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:59:53,757 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:00:03,950 - root - INFO - Epoch: 3, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 01:00:03,951 - root - INFO - train average_precision, 0.5134
+2024-03-15 01:00:03,951 - root - INFO - train roc_auc, 0.5040
+2024-03-15 01:00:03,951 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:00:03,951 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:00:13,983 - root - INFO - Epoch: 4, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 01:00:13,984 - root - INFO - train average_precision, 0.5117
+2024-03-15 01:00:13,984 - root - INFO - train roc_auc, 0.5136
+2024-03-15 01:00:13,984 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:00:13,984 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:00:24,034 - root - INFO - Epoch: 5, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 01:00:24,034 - root - INFO - train average_precision, 0.5109
+2024-03-15 01:00:24,034 - root - INFO - train roc_auc, 0.5122
+2024-03-15 01:00:24,034 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:00:24,034 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:00:34,054 - root - INFO - Epoch: 6, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:00:34,054 - root - INFO - train average_precision, 0.5082
+2024-03-15 01:00:34,054 - root - INFO - train roc_auc, 0.4978
+2024-03-15 01:00:34,054 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:00:34,054 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:00:44,155 - root - INFO - Epoch: 7, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:00:44,155 - root - INFO - train average_precision, 0.5052
+2024-03-15 01:00:44,155 - root - INFO - train roc_auc, 0.5002
+2024-03-15 01:00:44,155 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:00:44,155 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:00:54,284 - root - INFO - Epoch: 8, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:00:54,285 - root - INFO - train average_precision, 0.5030
+2024-03-15 01:00:54,285 - root - INFO - train roc_auc, 0.4937
+2024-03-15 01:00:54,285 - root - INFO - validate mrr, 0.2218
+2024-03-15 01:01:04,335 - root - INFO - Epoch: 9, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 01:01:04,335 - root - INFO - train average_precision, 0.5121
+2024-03-15 01:01:04,335 - root - INFO - train roc_auc, 0.5047
+2024-03-15 01:01:04,335 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:01:04,335 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:01:14,381 - root - INFO - Epoch: 10, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 01:01:14,381 - root - INFO - train average_precision, 0.5152
+2024-03-15 01:01:14,381 - root - INFO - train roc_auc, 0.5040
+2024-03-15 01:01:14,381 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:01:15,638 - root - INFO - test mrr, 0.2222
+2024-03-15 01:01:15,639 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:01:25,794 - root - INFO - Epoch: 11, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:01:25,794 - root - INFO - train average_precision, 0.5086
+2024-03-15 01:01:25,794 - root - INFO - train roc_auc, 0.4989
+2024-03-15 01:01:25,794 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:01:25,794 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:01:35,871 - root - INFO - Epoch: 12, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:01:35,871 - root - INFO - train average_precision, 0.5102
+2024-03-15 01:01:35,871 - root - INFO - train roc_auc, 0.4993
+2024-03-15 01:01:35,871 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:01:35,871 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:01:45,909 - root - INFO - Epoch: 13, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 01:01:45,909 - root - INFO - train average_precision, 0.5100
+2024-03-15 01:01:45,909 - root - INFO - train roc_auc, 0.5042
+2024-03-15 01:01:45,909 - root - INFO - validate mrr, 0.2232
+2024-03-15 01:01:45,910 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:01:56,002 - root - INFO - Epoch: 14, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:01:56,002 - root - INFO - train average_precision, 0.4974
+2024-03-15 01:01:56,002 - root - INFO - train roc_auc, 0.4918
+2024-03-15 01:01:56,002 - root - INFO - validate mrr, 0.2211
+2024-03-15 01:02:06,056 - root - INFO - Epoch: 15, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:02:06,056 - root - INFO - train average_precision, 0.5064
+2024-03-15 01:02:06,056 - root - INFO - train roc_auc, 0.5010
+2024-03-15 01:02:06,056 - root - INFO - validate mrr, 0.3136
+2024-03-15 01:02:06,057 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:02:16,149 - root - INFO - Epoch: 16, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:02:16,149 - root - INFO - train average_precision, 0.5076
+2024-03-15 01:02:16,149 - root - INFO - train roc_auc, 0.4956
+2024-03-15 01:02:16,150 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:02:26,353 - root - INFO - Epoch: 17, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:02:26,353 - root - INFO - train average_precision, 0.5086
+2024-03-15 01:02:26,353 - root - INFO - train roc_auc, 0.4968
+2024-03-15 01:02:26,353 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:02:36,527 - root - INFO - Epoch: 18, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 01:02:36,527 - root - INFO - train average_precision, 0.5194
+2024-03-15 01:02:36,527 - root - INFO - train roc_auc, 0.5102
+2024-03-15 01:02:36,527 - root - INFO - validate mrr, 0.2221
+2024-03-15 01:02:46,573 - root - INFO - Epoch: 19, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 01:02:46,574 - root - INFO - train average_precision, 0.5092
+2024-03-15 01:02:46,574 - root - INFO - train roc_auc, 0.5051
+2024-03-15 01:02:46,574 - root - INFO - validate mrr, 0.2268
+2024-03-15 01:02:56,644 - root - INFO - Epoch: 20, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 01:02:56,644 - root - INFO - train average_precision, 0.5082
+2024-03-15 01:02:56,644 - root - INFO - train roc_auc, 0.4971
+2024-03-15 01:02:56,644 - root - INFO - validate mrr, 0.2222
+2024-03-15 01:02:57,929 - root - INFO - test mrr, 0.2222
+2024-03-15 01:02:57,930 - root - INFO - load model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed1/GraphMixer_seed1.pkl
+2024-03-15 01:02:57,932 - root - INFO - get final performance on dataset tgbl-synthetic...
+2024-03-15 01:03:00,479 - root - INFO - validate mrr, 0.3136
+2024-03-15 01:03:00,479 - root - INFO - test mrr, 0.3136
+2024-03-15 01:03:00,479 - root - INFO - Run 2 cost 207.03 seconds.

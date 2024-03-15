@@ -1,0 +1,151 @@
+2024-03-15 00:13:47,722 - root - INFO - ********** Run 2 starts. **********
+2024-03-15 00:13:47,722 - root - INFO - configuration is Namespace(dataset_name='tgbl-synthetic', batch_size=200, model_name='TGAT', gpu=0, num_neighbors=8, sample_neighbor_strategy='recent', time_scaling_factor=1e-06, num_walk_heads=8, num_heads=2, num_layers=2, walk_length=1, time_gap=8, time_feat_dim=100, position_feat_dim=172, output_dim=172, edge_bank_memory_mode='unlimited_memory', time_window_mode='fixed_proportion', patch_size=1, channel_embedding_dim=50, max_input_sequence_length=8, learning_rate=0.0001, dropout=0.1, num_epochs=20, optimizer='Adam', weight_decay=0.0, patience=20, num_runs=3, test_interval_epochs=10, load_best_configs=False, device='cpu', seed=1, save_model_name='TGAT_seed1')
+2024-03-15 00:13:47,725 - root - INFO - model -> Sequential(
+  (0): TGAT(
+    (time_encoder): TimeEncoder(
+      (w): Linear(in_features=1, out_features=100, bias=True)
+    )
+    (temporal_conv_layers): ModuleList(
+      (0): MultiHeadAttention(
+        (query_projection): Linear(in_features=102, out_features=102, bias=False)
+        (key_projection): Linear(in_features=102, out_features=102, bias=False)
+        (value_projection): Linear(in_features=102, out_features=102, bias=False)
+        (layer_norm): LayerNorm((102,), eps=1e-05, elementwise_affine=True)
+        (residual_fc): Linear(in_features=102, out_features=102, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+      )
+      (1): MultiHeadAttention(
+        (query_projection): Linear(in_features=272, out_features=272, bias=False)
+        (key_projection): Linear(in_features=273, out_features=272, bias=False)
+        (value_projection): Linear(in_features=273, out_features=272, bias=False)
+        (layer_norm): LayerNorm((272,), eps=1e-05, elementwise_affine=True)
+        (residual_fc): Linear(in_features=272, out_features=272, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (merge_layers): ModuleList(
+      (0): MergeLayer(
+        (fc1): Linear(in_features=103, out_features=172, bias=True)
+        (fc2): Linear(in_features=172, out_features=172, bias=True)
+        (act): ReLU()
+      )
+      (1): MergeLayer(
+        (fc1): Linear(in_features=273, out_features=172, bias=True)
+        (fc2): Linear(in_features=172, out_features=172, bias=True)
+        (act): ReLU()
+      )
+    )
+  )
+  (1): MergeLayer(
+    (fc1): Linear(in_features=344, out_features=172, bias=True)
+    (fc2): Linear(in_features=172, out_features=1, bias=True)
+    (act): ReLU()
+  )
+)
+2024-03-15 00:13:47,725 - root - INFO - model name: TGAT, #parameters: 2093836 B, 2044.76171875 KB, 1.9968376159667969 MB.
+2024-03-15 00:13:53,812 - root - INFO - Epoch: 1, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:13:53,812 - root - INFO - train average_precision, 0.5159
+2024-03-15 00:13:53,812 - root - INFO - train roc_auc, 0.5070
+2024-03-15 00:13:53,812 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:13:53,812 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:13:59,831 - root - INFO - Epoch: 2, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:13:59,831 - root - INFO - train average_precision, 0.5040
+2024-03-15 00:13:59,831 - root - INFO - train roc_auc, 0.4951
+2024-03-15 00:13:59,831 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:13:59,832 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:14:05,933 - root - INFO - Epoch: 3, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 00:14:05,933 - root - INFO - train average_precision, 0.5100
+2024-03-15 00:14:05,933 - root - INFO - train roc_auc, 0.5015
+2024-03-15 00:14:05,933 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:14:05,933 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:14:11,942 - root - INFO - Epoch: 4, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 00:14:11,942 - root - INFO - train average_precision, 0.5163
+2024-03-15 00:14:11,942 - root - INFO - train roc_auc, 0.5067
+2024-03-15 00:14:11,942 - root - INFO - validate mrr, 0.2030
+2024-03-15 00:14:18,023 - root - INFO - Epoch: 5, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:14:18,024 - root - INFO - train average_precision, 0.5022
+2024-03-15 00:14:18,024 - root - INFO - train roc_auc, 0.4935
+2024-03-15 00:14:18,024 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:14:18,024 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:14:24,120 - root - INFO - Epoch: 6, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:14:24,120 - root - INFO - train average_precision, 0.5004
+2024-03-15 00:14:24,120 - root - INFO - train roc_auc, 0.4957
+2024-03-15 00:14:24,120 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:14:24,120 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:14:30,168 - root - INFO - Epoch: 7, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:14:30,169 - root - INFO - train average_precision, 0.5061
+2024-03-15 00:14:30,169 - root - INFO - train roc_auc, 0.5024
+2024-03-15 00:14:30,169 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:14:30,169 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:14:36,218 - root - INFO - Epoch: 8, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 00:14:36,218 - root - INFO - train average_precision, 0.5085
+2024-03-15 00:14:36,218 - root - INFO - train roc_auc, 0.5068
+2024-03-15 00:14:36,218 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:14:36,218 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:14:42,199 - root - INFO - Epoch: 9, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:14:42,199 - root - INFO - train average_precision, 0.5064
+2024-03-15 00:14:42,199 - root - INFO - train roc_auc, 0.5001
+2024-03-15 00:14:42,199 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:14:42,200 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:14:48,420 - root - INFO - Epoch: 10, learning rate: 0.0001, train loss: 0.6933
+2024-03-15 00:14:48,420 - root - INFO - train average_precision, 0.4980
+2024-03-15 00:14:48,420 - root - INFO - train roc_auc, 0.4863
+2024-03-15 00:14:48,420 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:14:49,852 - root - INFO - test mrr, 0.2222
+2024-03-15 00:14:49,853 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:14:55,913 - root - INFO - Epoch: 11, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 00:14:55,913 - root - INFO - train average_precision, 0.5105
+2024-03-15 00:14:55,913 - root - INFO - train roc_auc, 0.5022
+2024-03-15 00:14:55,914 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:14:55,914 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:01,964 - root - INFO - Epoch: 12, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 00:15:01,964 - root - INFO - train average_precision, 0.5078
+2024-03-15 00:15:01,964 - root - INFO - train roc_auc, 0.5048
+2024-03-15 00:15:01,964 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:01,964 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:07,927 - root - INFO - Epoch: 13, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 00:15:07,927 - root - INFO - train average_precision, 0.5133
+2024-03-15 00:15:07,927 - root - INFO - train roc_auc, 0.5057
+2024-03-15 00:15:07,927 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:07,927 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:14,016 - root - INFO - Epoch: 14, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:15:14,016 - root - INFO - train average_precision, 0.5016
+2024-03-15 00:15:14,016 - root - INFO - train roc_auc, 0.4957
+2024-03-15 00:15:14,016 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:14,016 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:20,124 - root - INFO - Epoch: 15, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:15:20,124 - root - INFO - train average_precision, 0.5122
+2024-03-15 00:15:20,124 - root - INFO - train roc_auc, 0.5018
+2024-03-15 00:15:20,124 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:20,124 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:26,214 - root - INFO - Epoch: 16, learning rate: 0.0001, train loss: 0.6932
+2024-03-15 00:15:26,214 - root - INFO - train average_precision, 0.5054
+2024-03-15 00:15:26,214 - root - INFO - train roc_auc, 0.4952
+2024-03-15 00:15:26,214 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:26,214 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:32,362 - root - INFO - Epoch: 17, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 00:15:32,362 - root - INFO - train average_precision, 0.5100
+2024-03-15 00:15:32,363 - root - INFO - train roc_auc, 0.5020
+2024-03-15 00:15:32,363 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:32,363 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:38,391 - root - INFO - Epoch: 18, learning rate: 0.0001, train loss: 0.6930
+2024-03-15 00:15:38,391 - root - INFO - train average_precision, 0.5173
+2024-03-15 00:15:38,391 - root - INFO - train roc_auc, 0.5147
+2024-03-15 00:15:38,391 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:38,392 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:44,569 - root - INFO - Epoch: 19, learning rate: 0.0001, train loss: 0.6931
+2024-03-15 00:15:44,569 - root - INFO - train average_precision, 0.5109
+2024-03-15 00:15:44,569 - root - INFO - train roc_auc, 0.5024
+2024-03-15 00:15:44,569 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:44,570 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:50,681 - root - INFO - Epoch: 20, learning rate: 0.0001, train loss: 0.6933
+2024-03-15 00:15:50,681 - root - INFO - train average_precision, 0.5028
+2024-03-15 00:15:50,681 - root - INFO - train roc_auc, 0.4880
+2024-03-15 00:15:50,681 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:52,092 - root - INFO - test mrr, 0.2222
+2024-03-15 00:15:52,092 - root - INFO - save model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:52,094 - root - INFO - load model ./saved_models/TGAT/tgbl-synthetic/TGAT_seed1/TGAT_seed1.pkl
+2024-03-15 00:15:52,096 - root - INFO - get final performance on dataset tgbl-synthetic...
+2024-03-15 00:15:54,997 - root - INFO - validate mrr, 0.2222
+2024-03-15 00:15:54,997 - root - INFO - test mrr, 0.2222
+2024-03-15 00:15:54,997 - root - INFO - Run 2 cost 127.27 seconds.

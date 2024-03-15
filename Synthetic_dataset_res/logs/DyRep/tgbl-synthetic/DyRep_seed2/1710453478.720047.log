@@ -1,0 +1,149 @@
+2024-03-14 21:57:58,721 - root - INFO - ********** Run 3 starts. **********
+2024-03-14 21:57:58,721 - root - INFO - configuration is Namespace(dataset_name='tgbl-synthetic', batch_size=200, model_name='DyRep', gpu=0, num_neighbors=24, sample_neighbor_strategy='recent', time_scaling_factor=1e-06, num_walk_heads=8, num_heads=2, num_layers=2, walk_length=1, time_gap=24, time_feat_dim=100, position_feat_dim=172, output_dim=172, edge_bank_memory_mode='unlimited_memory', time_window_mode='fixed_proportion', patch_size=1, channel_embedding_dim=50, max_input_sequence_length=24, learning_rate=0.0001, dropout=0.1, num_epochs=20, optimizer='Adam', weight_decay=0.0, patience=20, num_runs=5, test_interval_epochs=10, load_best_configs=False, device='cpu', seed=2, save_model_name='DyRep_seed2')
+2024-03-14 21:57:58,732 - root - INFO - model -> Sequential(
+  (0): MemoryModel(
+    (time_encoder): TimeEncoder(
+      (w): Linear(in_features=1, out_features=100, bias=True)
+    )
+    (message_aggregator): MessageAggregator()
+    (memory_bank): MemoryBank(num_nodes=10, memory_dim=172)
+    (memory_updater): RNNMemoryUpdater(
+      (memory_bank): MemoryBank(num_nodes=10, memory_dim=172)
+      (memory_updater): RNNCell(445, 172)
+    )
+    (embedding_module): GraphAttentionEmbedding(
+      (time_encoder): TimeEncoder(
+        (w): Linear(in_features=1, out_features=100, bias=True)
+      )
+      (temporal_conv_layers): ModuleList(
+        (0-1): 2 x MultiHeadAttention(
+          (query_projection): Linear(in_features=272, out_features=272, bias=False)
+          (key_projection): Linear(in_features=273, out_features=272, bias=False)
+          (value_projection): Linear(in_features=273, out_features=272, bias=False)
+          (layer_norm): LayerNorm((272,), eps=1e-05, elementwise_affine=True)
+          (residual_fc): Linear(in_features=272, out_features=272, bias=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+      )
+      (merge_layers): ModuleList(
+        (0-1): 2 x MergeLayer(
+          (fc1): Linear(in_features=444, out_features=172, bias=True)
+          (fc2): Linear(in_features=172, out_features=172, bias=True)
+          (act): ReLU()
+        )
+      )
+      (projection_layer): Linear(in_features=1, out_features=172, bias=True)
+    )
+  )
+  (1): MergeLayer(
+    (fc1): Linear(in_features=344, out_features=172, bias=True)
+    (fc2): Linear(in_features=172, out_features=1, bias=True)
+    (act): ReLU()
+  )
+)
+2024-03-14 21:57:58,733 - root - INFO - model name: DyRep, #parameters: 3894836 B, 3803.55078125 KB, 3.714405059814453 MB.
+2024-03-14 21:58:42,511 - root - INFO - Epoch: 1, learning rate: 0.0001, train loss: 0.6934
+2024-03-14 21:58:42,512 - root - INFO - train average_precision, 0.5058
+2024-03-14 21:58:42,512 - root - INFO - train roc_auc, 0.4997
+2024-03-14 21:58:42,512 - root - INFO - validate mrr, 0.3397
+2024-03-14 21:58:42,512 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 21:59:19,430 - root - INFO - Epoch: 2, learning rate: 0.0001, train loss: 0.6933
+2024-03-14 21:59:19,430 - root - INFO - train average_precision, 0.5028
+2024-03-14 21:59:19,430 - root - INFO - train roc_auc, 0.5008
+2024-03-14 21:59:19,430 - root - INFO - validate mrr, 0.3397
+2024-03-14 21:59:55,129 - root - INFO - Epoch: 3, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 21:59:55,130 - root - INFO - train average_precision, 0.5041
+2024-03-14 21:59:55,130 - root - INFO - train roc_auc, 0.5011
+2024-03-14 21:59:55,130 - root - INFO - validate mrr, 0.3397
+2024-03-14 21:59:55,130 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:00:33,019 - root - INFO - Epoch: 4, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:00:33,019 - root - INFO - train average_precision, 0.5063
+2024-03-14 22:00:33,020 - root - INFO - train roc_auc, 0.5049
+2024-03-14 22:00:33,020 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:00:33,020 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:01:17,097 - root - INFO - Epoch: 5, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:01:17,098 - root - INFO - train average_precision, 0.5038
+2024-03-14 22:01:17,098 - root - INFO - train roc_auc, 0.5027
+2024-03-14 22:01:17,098 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:01:17,098 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:01:58,187 - root - INFO - Epoch: 6, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:01:58,187 - root - INFO - train average_precision, 0.5017
+2024-03-14 22:01:58,187 - root - INFO - train roc_auc, 0.4995
+2024-03-14 22:01:58,187 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:01:58,188 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:02:37,324 - root - INFO - Epoch: 7, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:02:37,324 - root - INFO - train average_precision, 0.5073
+2024-03-14 22:02:37,324 - root - INFO - train roc_auc, 0.5023
+2024-03-14 22:02:37,325 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:02:37,326 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:03:17,182 - root - INFO - Epoch: 8, learning rate: 0.0001, train loss: 0.6933
+2024-03-14 22:03:17,182 - root - INFO - train average_precision, 0.4956
+2024-03-14 22:03:17,182 - root - INFO - train roc_auc, 0.4930
+2024-03-14 22:03:17,182 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:03:17,183 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:03:55,041 - root - INFO - Epoch: 9, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:03:55,041 - root - INFO - train average_precision, 0.5021
+2024-03-14 22:03:55,041 - root - INFO - train roc_auc, 0.5011
+2024-03-14 22:03:55,041 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:03:55,041 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:04:33,295 - root - INFO - Epoch: 10, learning rate: 0.0001, train loss: 0.6933
+2024-03-14 22:04:33,301 - root - INFO - train average_precision, 0.4928
+2024-03-14 22:04:33,301 - root - INFO - train roc_auc, 0.4903
+2024-03-14 22:04:33,302 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:04:50,552 - root - INFO - test mrr, 0.3397
+2024-03-14 22:04:50,553 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:05:28,361 - root - INFO - Epoch: 11, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:05:28,361 - root - INFO - train average_precision, 0.5056
+2024-03-14 22:05:28,361 - root - INFO - train roc_auc, 0.5032
+2024-03-14 22:05:28,361 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:05:28,361 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:06:08,674 - root - INFO - Epoch: 12, learning rate: 0.0001, train loss: 0.6931
+2024-03-14 22:06:08,674 - root - INFO - train average_precision, 0.5097
+2024-03-14 22:06:08,674 - root - INFO - train roc_auc, 0.5073
+2024-03-14 22:06:08,674 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:06:08,674 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:06:47,583 - root - INFO - Epoch: 13, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:06:47,584 - root - INFO - train average_precision, 0.5026
+2024-03-14 22:06:47,584 - root - INFO - train roc_auc, 0.4982
+2024-03-14 22:06:47,584 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:06:47,584 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:07:28,626 - root - INFO - Epoch: 14, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:07:28,626 - root - INFO - train average_precision, 0.5043
+2024-03-14 22:07:28,626 - root - INFO - train roc_auc, 0.4983
+2024-03-14 22:07:28,626 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:07:28,626 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:08:08,344 - root - INFO - Epoch: 15, learning rate: 0.0001, train loss: 0.6933
+2024-03-14 22:08:08,345 - root - INFO - train average_precision, 0.5013
+2024-03-14 22:08:08,345 - root - INFO - train roc_auc, 0.5017
+2024-03-14 22:08:08,345 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:08:08,345 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:08:50,837 - root - INFO - Epoch: 16, learning rate: 0.0001, train loss: 0.6933
+2024-03-14 22:08:50,838 - root - INFO - train average_precision, 0.5000
+2024-03-14 22:08:50,838 - root - INFO - train roc_auc, 0.4964
+2024-03-14 22:08:50,838 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:08:50,838 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:09:31,856 - root - INFO - Epoch: 17, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:09:31,856 - root - INFO - train average_precision, 0.5073
+2024-03-14 22:09:31,856 - root - INFO - train roc_auc, 0.5012
+2024-03-14 22:09:31,857 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:09:31,857 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:10:10,951 - root - INFO - Epoch: 18, learning rate: 0.0001, train loss: 0.6933
+2024-03-14 22:10:10,952 - root - INFO - train average_precision, 0.4956
+2024-03-14 22:10:10,952 - root - INFO - train roc_auc, 0.4922
+2024-03-14 22:10:10,952 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:10:10,952 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:10:47,449 - root - INFO - Epoch: 19, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 22:10:47,450 - root - INFO - train average_precision, 0.5013
+2024-03-14 22:10:47,450 - root - INFO - train roc_auc, 0.5033
+2024-03-14 22:10:47,450 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:10:47,451 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:11:25,275 - root - INFO - Epoch: 20, learning rate: 0.0001, train loss: 0.6931
+2024-03-14 22:11:25,275 - root - INFO - train average_precision, 0.5019
+2024-03-14 22:11:25,276 - root - INFO - train roc_auc, 0.5017
+2024-03-14 22:11:25,276 - root - INFO - validate mrr, 0.3397
+2024-03-14 22:11:43,612 - root - INFO - test mrr, 0.3397
+2024-03-14 22:11:43,613 - root - INFO - save model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:11:43,628 - root - INFO - load model ./saved_models/DyRep/tgbl-synthetic/DyRep_seed2/DyRep_seed2.pkl
+2024-03-14 22:11:43,645 - root - INFO - get final performance on dataset tgbl-synthetic...
+2024-03-14 22:12:02,073 - root - INFO - test mrr, 0.3397
+2024-03-14 22:12:02,074 - root - INFO - Run 3 cost 843.35 seconds.

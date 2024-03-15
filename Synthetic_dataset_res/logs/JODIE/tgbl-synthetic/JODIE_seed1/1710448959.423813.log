@@ -1,0 +1,121 @@
+2024-03-14 20:42:39,424 - root - INFO - ********** Run 2 starts. **********
+2024-03-14 20:42:39,424 - root - INFO - configuration is Namespace(dataset_name='tgbl-synthetic', batch_size=200, model_name='JODIE', gpu=0, num_neighbors=16, sample_neighbor_strategy='recent', time_scaling_factor=1e-06, num_walk_heads=8, num_heads=2, num_layers=2, walk_length=1, time_gap=16, time_feat_dim=100, position_feat_dim=172, output_dim=172, edge_bank_memory_mode='unlimited_memory', time_window_mode='fixed_proportion', patch_size=1, channel_embedding_dim=50, max_input_sequence_length=16, learning_rate=0.0001, dropout=0.1, num_epochs=20, optimizer='Adam', weight_decay=0.0, patience=20, num_runs=5, test_interval_epochs=10, load_best_configs=False, device='cpu', seed=1, save_model_name='JODIE_seed1')
+2024-03-14 20:42:39,428 - root - INFO - model -> Sequential(
+  (0): MemoryModel(
+    (time_encoder): TimeEncoder(
+      (w): Linear(in_features=1, out_features=100, bias=True)
+    )
+    (message_aggregator): MessageAggregator()
+    (memory_bank): MemoryBank(num_nodes=10, memory_dim=172)
+    (memory_updater): RNNMemoryUpdater(
+      (memory_bank): MemoryBank(num_nodes=10, memory_dim=172)
+      (memory_updater): RNNCell(445, 172)
+    )
+    (embedding_module): TimeProjectionEmbedding(
+      (dropout): Dropout(p=0.1, inplace=False)
+      (linear_layer): Linear(in_features=1, out_features=172, bias=True)
+    )
+  )
+  (1): MergeLayer(
+    (fc1): Linear(in_features=344, out_features=172, bias=True)
+    (fc2): Linear(in_features=172, out_features=1, bias=True)
+    (act): ReLU()
+  )
+)
+2024-03-14 20:42:39,428 - root - INFO - model name: JODIE, #parameters: 666100 B, 650.48828125 KB, 0.6352424621582031 MB.
+2024-03-14 20:42:39,664 - root - INFO - Epoch: 1, learning rate: 0.0001, train loss: 0.6948
+2024-03-14 20:42:39,664 - root - INFO - train average_precision, 0.5088
+2024-03-14 20:42:39,664 - root - INFO - train roc_auc, 0.5048
+2024-03-14 20:42:39,664 - root - INFO - validate mrr, 0.3350
+2024-03-14 20:42:39,664 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:39,906 - root - INFO - Epoch: 2, learning rate: 0.0001, train loss: 0.6946
+2024-03-14 20:42:39,906 - root - INFO - train average_precision, 0.5047
+2024-03-14 20:42:39,907 - root - INFO - train roc_auc, 0.5040
+2024-03-14 20:42:39,907 - root - INFO - validate mrr, 0.3418
+2024-03-14 20:42:39,907 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:40,151 - root - INFO - Epoch: 3, learning rate: 0.0001, train loss: 0.6948
+2024-03-14 20:42:40,152 - root - INFO - train average_precision, 0.4958
+2024-03-14 20:42:40,152 - root - INFO - train roc_auc, 0.4863
+2024-03-14 20:42:40,152 - root - INFO - validate mrr, 0.3431
+2024-03-14 20:42:40,152 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:40,405 - root - INFO - Epoch: 4, learning rate: 0.0001, train loss: 0.6938
+2024-03-14 20:42:40,405 - root - INFO - train average_precision, 0.5047
+2024-03-14 20:42:40,405 - root - INFO - train roc_auc, 0.5016
+2024-03-14 20:42:40,405 - root - INFO - validate mrr, 0.3410
+2024-03-14 20:42:40,636 - root - INFO - Epoch: 5, learning rate: 0.0001, train loss: 0.6937
+2024-03-14 20:42:40,636 - root - INFO - train average_precision, 0.5076
+2024-03-14 20:42:40,636 - root - INFO - train roc_auc, 0.5050
+2024-03-14 20:42:40,636 - root - INFO - validate mrr, 0.3433
+2024-03-14 20:42:40,636 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:40,875 - root - INFO - Epoch: 6, learning rate: 0.0001, train loss: 0.6938
+2024-03-14 20:42:40,875 - root - INFO - train average_precision, 0.5100
+2024-03-14 20:42:40,875 - root - INFO - train roc_auc, 0.5047
+2024-03-14 20:42:40,876 - root - INFO - validate mrr, 0.3473
+2024-03-14 20:42:40,876 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:41,118 - root - INFO - Epoch: 7, learning rate: 0.0001, train loss: 0.6930
+2024-03-14 20:42:41,118 - root - INFO - train average_precision, 0.5235
+2024-03-14 20:42:41,118 - root - INFO - train roc_auc, 0.5136
+2024-03-14 20:42:41,118 - root - INFO - validate mrr, 0.3365
+2024-03-14 20:42:41,347 - root - INFO - Epoch: 8, learning rate: 0.0001, train loss: 0.6944
+2024-03-14 20:42:41,347 - root - INFO - train average_precision, 0.4992
+2024-03-14 20:42:41,347 - root - INFO - train roc_auc, 0.4902
+2024-03-14 20:42:41,347 - root - INFO - validate mrr, 0.3541
+2024-03-14 20:42:41,347 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:41,588 - root - INFO - Epoch: 9, learning rate: 0.0001, train loss: 0.6935
+2024-03-14 20:42:41,588 - root - INFO - train average_precision, 0.5055
+2024-03-14 20:42:41,588 - root - INFO - train roc_auc, 0.5046
+2024-03-14 20:42:41,588 - root - INFO - validate mrr, 0.3546
+2024-03-14 20:42:41,588 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:41,828 - root - INFO - Epoch: 10, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 20:42:41,828 - root - INFO - train average_precision, 0.5152
+2024-03-14 20:42:41,828 - root - INFO - train roc_auc, 0.5080
+2024-03-14 20:42:41,828 - root - INFO - validate mrr, 0.3568
+2024-03-14 20:42:41,895 - root - INFO - test mrr, 0.3605
+2024-03-14 20:42:41,895 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:42,141 - root - INFO - Epoch: 11, learning rate: 0.0001, train loss: 0.6935
+2024-03-14 20:42:42,141 - root - INFO - train average_precision, 0.5132
+2024-03-14 20:42:42,142 - root - INFO - train roc_auc, 0.5083
+2024-03-14 20:42:42,142 - root - INFO - validate mrr, 0.3467
+2024-03-14 20:42:42,400 - root - INFO - Epoch: 12, learning rate: 0.0001, train loss: 0.6936
+2024-03-14 20:42:42,400 - root - INFO - train average_precision, 0.5051
+2024-03-14 20:42:42,400 - root - INFO - train roc_auc, 0.5066
+2024-03-14 20:42:42,400 - root - INFO - validate mrr, 0.3504
+2024-03-14 20:42:42,648 - root - INFO - Epoch: 13, learning rate: 0.0001, train loss: 0.6935
+2024-03-14 20:42:42,648 - root - INFO - train average_precision, 0.5121
+2024-03-14 20:42:42,648 - root - INFO - train roc_auc, 0.5052
+2024-03-14 20:42:42,648 - root - INFO - validate mrr, 0.3529
+2024-03-14 20:42:42,881 - root - INFO - Epoch: 14, learning rate: 0.0001, train loss: 0.6939
+2024-03-14 20:42:42,882 - root - INFO - train average_precision, 0.5084
+2024-03-14 20:42:42,882 - root - INFO - train roc_auc, 0.5016
+2024-03-14 20:42:42,883 - root - INFO - validate mrr, 0.3486
+2024-03-14 20:42:43,111 - root - INFO - Epoch: 15, learning rate: 0.0001, train loss: 0.6937
+2024-03-14 20:42:43,111 - root - INFO - train average_precision, 0.5153
+2024-03-14 20:42:43,111 - root - INFO - train roc_auc, 0.5104
+2024-03-14 20:42:43,111 - root - INFO - validate mrr, 0.3446
+2024-03-14 20:42:43,342 - root - INFO - Epoch: 16, learning rate: 0.0001, train loss: 0.6940
+2024-03-14 20:42:43,342 - root - INFO - train average_precision, 0.5073
+2024-03-14 20:42:43,342 - root - INFO - train roc_auc, 0.5076
+2024-03-14 20:42:43,342 - root - INFO - validate mrr, 0.3500
+2024-03-14 20:42:43,571 - root - INFO - Epoch: 17, learning rate: 0.0001, train loss: 0.6937
+2024-03-14 20:42:43,571 - root - INFO - train average_precision, 0.5136
+2024-03-14 20:42:43,571 - root - INFO - train roc_auc, 0.5080
+2024-03-14 20:42:43,571 - root - INFO - validate mrr, 0.3563
+2024-03-14 20:42:43,802 - root - INFO - Epoch: 18, learning rate: 0.0001, train loss: 0.6943
+2024-03-14 20:42:43,802 - root - INFO - train average_precision, 0.5036
+2024-03-14 20:42:43,802 - root - INFO - train roc_auc, 0.4998
+2024-03-14 20:42:43,802 - root - INFO - validate mrr, 0.3532
+2024-03-14 20:42:44,036 - root - INFO - Epoch: 19, learning rate: 0.0001, train loss: 0.6941
+2024-03-14 20:42:44,036 - root - INFO - train average_precision, 0.5139
+2024-03-14 20:42:44,036 - root - INFO - train roc_auc, 0.5096
+2024-03-14 20:42:44,036 - root - INFO - validate mrr, 0.3569
+2024-03-14 20:42:44,037 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:44,279 - root - INFO - Epoch: 20, learning rate: 0.0001, train loss: 0.6936
+2024-03-14 20:42:44,280 - root - INFO - train average_precision, 0.5097
+2024-03-14 20:42:44,280 - root - INFO - train roc_auc, 0.5051
+2024-03-14 20:42:44,280 - root - INFO - validate mrr, 0.3695
+2024-03-14 20:42:44,346 - root - INFO - test mrr, 0.3487
+2024-03-14 20:42:44,346 - root - INFO - save model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:44,357 - root - INFO - load model ./saved_models/JODIE/tgbl-synthetic/JODIE_seed1/JODIE_seed1.pkl
+2024-03-14 20:42:44,365 - root - INFO - get final performance on dataset tgbl-synthetic...
+2024-03-14 20:42:44,434 - root - INFO - test mrr, 0.3487
+2024-03-14 20:42:44,434 - root - INFO - Run 2 cost 5.01 seconds.

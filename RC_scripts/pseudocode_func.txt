@@ -1,0 +1,14 @@
+compute_timefram(dataset, seq_length):
+	all_periods  = []
+	for each pair in the dataset: // Starting from the most recent pair
+		find all one hop neighbours
+		num_neighbour_interactions = compute all interactions with one hop neighbours in the past
+		if num_neighbour_interactions > seq_length:
+			find the oldest interaction with a neighbour
+			cur_period = compute time difference between current timestemp of the processed pair  and the timestemp of the longest interaction
+			add cur_period to all_periods
+
+	average(all_periods)
+
+
+8, 16, 32, 128, 512, 1024, 4096

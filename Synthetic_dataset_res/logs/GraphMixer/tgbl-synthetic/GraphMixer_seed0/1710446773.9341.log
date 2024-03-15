@@ -1,0 +1,62 @@
+2024-03-14 20:06:13,934 - root - INFO - ********** Run 1 starts. **********
+2024-03-14 20:06:13,934 - root - INFO - configuration is Namespace(dataset_name='tgbl-synthetic', batch_size=200, model_name='GraphMixer', gpu=0, num_neighbors=32, sample_neighbor_strategy='recent', time_scaling_factor=1e-06, num_walk_heads=8, num_heads=2, num_layers=2, walk_length=1, time_gap=32, time_feat_dim=100, position_feat_dim=172, output_dim=172, edge_bank_memory_mode='unlimited_memory', time_window_mode='fixed_proportion', patch_size=1, channel_embedding_dim=50, max_input_sequence_length=4, learning_rate=0.0001, dropout=0.1, num_epochs=20, optimizer='Adam', weight_decay=0.0, patience=20, num_runs=5, test_interval_epochs=10, load_best_configs=False, device='cpu', seed=0, save_model_name='GraphMixer_seed0')
+2024-03-14 20:06:13,947 - root - INFO - model -> Sequential(
+  (0): GraphMixer(
+    (time_encoder): TimeEncoder(
+      (w): Linear(in_features=1, out_features=100, bias=True)
+    )
+    (projection_layer): Linear(in_features=101, out_features=172, bias=True)
+    (mlp_mixers): ModuleList(
+      (0-1): 2 x MLPMixer(
+        (token_norm): LayerNorm((32,), eps=1e-05, elementwise_affine=True)
+        (token_feedforward): FeedForwardNet(
+          (ffn): Sequential(
+            (0): Linear(in_features=32, out_features=16, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.1, inplace=False)
+            (3): Linear(in_features=16, out_features=32, bias=True)
+            (4): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (channel_norm): LayerNorm((172,), eps=1e-05, elementwise_affine=True)
+        (channel_feedforward): FeedForwardNet(
+          (ffn): Sequential(
+            (0): Linear(in_features=172, out_features=688, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.1, inplace=False)
+            (3): Linear(in_features=688, out_features=172, bias=True)
+            (4): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+    )
+    (output_layer): Linear(in_features=173, out_features=172, bias=True)
+  )
+  (1): MergeLayer(
+    (fc1): Linear(in_features=344, out_features=172, bias=True)
+    (fc2): Linear(in_features=172, out_features=1, bias=True)
+    (act): ReLU()
+  )
+)
+2024-03-14 20:06:13,948 - root - INFO - model name: GraphMixer, #parameters: 2340036 B, 2285.19140625 KB, 2.2316322326660156 MB.
+2024-03-14 20:06:27,201 - root - INFO - Epoch: 1, learning rate: 0.0001, train loss: 0.6943
+2024-03-14 20:06:27,201 - root - INFO - train average_precision, 0.5063
+2024-03-14 20:06:27,201 - root - INFO - train roc_auc, 0.4926
+2024-03-14 20:06:27,201 - root - INFO - validate mrr, 0.2242
+2024-03-14 20:06:27,202 - root - INFO - save model ./saved_models/GraphMixer/tgbl-synthetic/GraphMixer_seed0/GraphMixer_seed0.pkl
+2024-03-14 20:06:40,192 - root - INFO - Epoch: 2, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 20:06:40,192 - root - INFO - train average_precision, 0.5029
+2024-03-14 20:06:40,193 - root - INFO - train roc_auc, 0.4964
+2024-03-14 20:06:40,193 - root - INFO - validate mrr, 0.2222
+2024-03-14 20:06:53,099 - root - INFO - Epoch: 3, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 20:06:53,099 - root - INFO - train average_precision, 0.5116
+2024-03-14 20:06:53,099 - root - INFO - train roc_auc, 0.5063
+2024-03-14 20:06:53,099 - root - INFO - validate mrr, 0.2233
+2024-03-14 20:07:06,058 - root - INFO - Epoch: 4, learning rate: 0.0001, train loss: 0.6931
+2024-03-14 20:07:06,058 - root - INFO - train average_precision, 0.5124
+2024-03-14 20:07:06,058 - root - INFO - train roc_auc, 0.5037
+2024-03-14 20:07:06,058 - root - INFO - validate mrr, 0.2222
+2024-03-14 20:07:18,979 - root - INFO - Epoch: 5, learning rate: 0.0001, train loss: 0.6932
+2024-03-14 20:07:18,979 - root - INFO - train average_precision, 0.4927
+2024-03-14 20:07:18,979 - root - INFO - train roc_auc, 0.4873
+2024-03-14 20:07:18,980 - root - INFO - validate mrr, 0.2222

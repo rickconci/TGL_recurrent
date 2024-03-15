@@ -1,0 +1,8 @@
+{
+    "validate metrics": {
+        "mrr": "0.3874"
+    },
+    "test metrics": {
+        "mrr": "0.3874"
+    }
+}

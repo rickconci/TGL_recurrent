@@ -1,0 +1,149 @@
+2024-03-15 01:06:30,698 - root - INFO - ********** Run 1 starts. **********
+2024-03-15 01:06:30,698 - root - INFO - configuration is Namespace(dataset_name='tgbl-synthetic', batch_size=200, model_name='DyGFormer', gpu=0, num_neighbors=8, sample_neighbor_strategy='recent', time_scaling_factor=1e-06, num_walk_heads=8, num_heads=2, num_layers=2, walk_length=1, time_gap=8, time_feat_dim=100, position_feat_dim=172, output_dim=172, edge_bank_memory_mode='unlimited_memory', time_window_mode='fixed_proportion', patch_size=1, channel_embedding_dim=50, max_input_sequence_length=8, learning_rate=0.0001, dropout=0.1, num_epochs=20, optimizer='Adam', weight_decay=0.0, patience=20, num_runs=3, test_interval_epochs=10, load_best_configs=False, device='cpu', seed=0, save_model_name='DyGFormer_seed0')
+2024-03-15 01:06:30,702 - root - INFO - model -> Sequential(
+  (0): DyGFormer(
+    (time_encoder): TimeEncoder(
+      (w): Linear(in_features=1, out_features=100, bias=True)
+    )
+    (neighbor_co_occurrence_encoder): NeighborCooccurrenceEncoder(
+      (neighbor_co_occurrence_encode_layer): Sequential(
+        (0): Linear(in_features=1, out_features=50, bias=True)
+        (1): ReLU()
+        (2): Linear(in_features=50, out_features=50, bias=True)
+      )
+    )
+    (projection_layer): ModuleDict(
+      (node): Linear(in_features=1, out_features=50, bias=True)
+      (edge): Linear(in_features=1, out_features=50, bias=True)
+      (time): Linear(in_features=100, out_features=50, bias=True)
+      (neighbor_co_occurrence): Linear(in_features=50, out_features=50, bias=True)
+    )
+    (transformers): ModuleList(
+      (0-1): 2 x TransformerEncoder(
+        (multi_head_attention): MultiheadAttention(
+          (out_proj): NonDynamicallyQuantizableLinear(in_features=200, out_features=200, bias=True)
+        )
+        (dropout): Dropout(p=0.1, inplace=False)
+        (linear_layers): ModuleList(
+          (0): Linear(in_features=200, out_features=800, bias=True)
+          (1): Linear(in_features=800, out_features=200, bias=True)
+        )
+        (norm_layers): ModuleList(
+          (0-1): 2 x LayerNorm((200,), eps=1e-05, elementwise_affine=True)
+        )
+      )
+    )
+    (output_layer): Linear(in_features=200, out_features=172, bias=True)
+  )
+  (1): MergeLayer(
+    (fc1): Linear(in_features=344, out_features=172, bias=True)
+    (fc2): Linear(in_features=172, out_features=1, bias=True)
+    (act): ReLU()
+  )
+)
+2024-03-15 01:06:30,702 - root - INFO - model name: DyGFormer, #parameters: 4279740 B, 4179.43359375 KB, 4.081478118896484 MB.
+2024-03-15 01:06:36,072 - root - INFO - Epoch: 1, learning rate: 0.0001, train loss: 0.6892
+2024-03-15 01:06:36,072 - root - INFO - train average_precision, 0.5899
+2024-03-15 01:06:36,072 - root - INFO - train roc_auc, 0.5796
+2024-03-15 01:06:36,072 - root - INFO - validate mrr, 0.5116
+2024-03-15 01:06:36,072 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:06:41,321 - root - INFO - Epoch: 2, learning rate: 0.0001, train loss: 0.6289
+2024-03-15 01:06:41,321 - root - INFO - train average_precision, 0.6469
+2024-03-15 01:06:41,321 - root - INFO - train roc_auc, 0.6772
+2024-03-15 01:06:41,321 - root - INFO - validate mrr, 0.4625
+2024-03-15 01:06:46,608 - root - INFO - Epoch: 3, learning rate: 0.0001, train loss: 0.4538
+2024-03-15 01:06:46,608 - root - INFO - train average_precision, 0.6482
+2024-03-15 01:06:46,608 - root - INFO - train roc_auc, 0.7659
+2024-03-15 01:06:46,608 - root - INFO - validate mrr, 0.6667
+2024-03-15 01:06:46,608 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:06:51,819 - root - INFO - Epoch: 4, learning rate: 0.0001, train loss: 0.4098
+2024-03-15 01:06:51,819 - root - INFO - train average_precision, 0.7724
+2024-03-15 01:06:51,819 - root - INFO - train roc_auc, 0.8444
+2024-03-15 01:06:51,819 - root - INFO - validate mrr, 0.6458
+2024-03-15 01:06:56,888 - root - INFO - Epoch: 5, learning rate: 0.0001, train loss: 0.3730
+2024-03-15 01:06:56,889 - root - INFO - train average_precision, 0.8018
+2024-03-15 01:06:56,889 - root - INFO - train roc_auc, 0.8630
+2024-03-15 01:06:56,889 - root - INFO - validate mrr, 0.6667
+2024-03-15 01:06:56,889 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:02,366 - root - INFO - Epoch: 6, learning rate: 0.0001, train loss: 0.3514
+2024-03-15 01:07:02,366 - root - INFO - train average_precision, 0.8027
+2024-03-15 01:07:02,366 - root - INFO - train roc_auc, 0.8737
+2024-03-15 01:07:02,366 - root - INFO - validate mrr, 0.7500
+2024-03-15 01:07:02,366 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:07,801 - root - INFO - Epoch: 7, learning rate: 0.0001, train loss: 0.3497
+2024-03-15 01:07:07,801 - root - INFO - train average_precision, 0.8032
+2024-03-15 01:07:07,801 - root - INFO - train roc_auc, 0.8741
+2024-03-15 01:07:07,801 - root - INFO - validate mrr, 0.7500
+2024-03-15 01:07:07,801 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:13,193 - root - INFO - Epoch: 8, learning rate: 0.0001, train loss: 0.3553
+2024-03-15 01:07:13,193 - root - INFO - train average_precision, 0.7936
+2024-03-15 01:07:13,193 - root - INFO - train roc_auc, 0.8641
+2024-03-15 01:07:13,193 - root - INFO - validate mrr, 0.7500
+2024-03-15 01:07:13,193 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:18,447 - root - INFO - Epoch: 9, learning rate: 0.0001, train loss: 0.3463
+2024-03-15 01:07:18,447 - root - INFO - train average_precision, 0.7976
+2024-03-15 01:07:18,447 - root - INFO - train roc_auc, 0.8702
+2024-03-15 01:07:18,447 - root - INFO - validate mrr, 0.7500
+2024-03-15 01:07:18,447 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:23,897 - root - INFO - Epoch: 10, learning rate: 0.0001, train loss: 0.3372
+2024-03-15 01:07:23,897 - root - INFO - train average_precision, 0.7929
+2024-03-15 01:07:23,897 - root - INFO - train roc_auc, 0.8699
+2024-03-15 01:07:23,897 - root - INFO - validate mrr, 0.7500
+2024-03-15 01:07:24,861 - root - INFO - test mrr, 0.7500
+2024-03-15 01:07:24,862 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:30,275 - root - INFO - Epoch: 11, learning rate: 0.0001, train loss: 0.3293
+2024-03-15 01:07:30,275 - root - INFO - train average_precision, 0.8131
+2024-03-15 01:07:30,275 - root - INFO - train roc_auc, 0.8816
+2024-03-15 01:07:30,275 - root - INFO - validate mrr, 0.7500
+2024-03-15 01:07:30,276 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:35,672 - root - INFO - Epoch: 12, learning rate: 0.0001, train loss: 0.3377
+2024-03-15 01:07:35,672 - root - INFO - train average_precision, 0.7911
+2024-03-15 01:07:35,672 - root - INFO - train roc_auc, 0.8688
+2024-03-15 01:07:35,672 - root - INFO - validate mrr, 0.7500
+2024-03-15 01:07:35,672 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:41,059 - root - INFO - Epoch: 13, learning rate: 0.0001, train loss: 0.3374
+2024-03-15 01:07:41,059 - root - INFO - train average_precision, 0.8016
+2024-03-15 01:07:41,059 - root - INFO - train roc_auc, 0.8726
+2024-03-15 01:07:41,059 - root - INFO - validate mrr, 0.7500
+2024-03-15 01:07:41,059 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:46,427 - root - INFO - Epoch: 14, learning rate: 0.0001, train loss: 0.3248
+2024-03-15 01:07:46,427 - root - INFO - train average_precision, 0.8199
+2024-03-15 01:07:46,427 - root - INFO - train roc_auc, 0.8841
+2024-03-15 01:07:46,427 - root - INFO - validate mrr, 0.7500
+2024-03-15 01:07:46,427 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:51,548 - root - INFO - Epoch: 15, learning rate: 0.0001, train loss: 0.3296
+2024-03-15 01:07:51,548 - root - INFO - train average_precision, 0.8211
+2024-03-15 01:07:51,548 - root - INFO - train roc_auc, 0.8823
+2024-03-15 01:07:51,548 - root - INFO - validate mrr, 0.8750
+2024-03-15 01:07:51,549 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:07:57,157 - root - INFO - Epoch: 16, learning rate: 0.0001, train loss: 0.3146
+2024-03-15 01:07:57,157 - root - INFO - train average_precision, 0.8389
+2024-03-15 01:07:57,157 - root - INFO - train roc_auc, 0.8934
+2024-03-15 01:07:57,157 - root - INFO - validate mrr, 0.8750
+2024-03-15 01:07:57,157 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:08:02,570 - root - INFO - Epoch: 17, learning rate: 0.0001, train loss: 0.3258
+2024-03-15 01:08:02,570 - root - INFO - train average_precision, 0.8386
+2024-03-15 01:08:02,570 - root - INFO - train roc_auc, 0.8917
+2024-03-15 01:08:02,571 - root - INFO - validate mrr, 0.8750
+2024-03-15 01:08:02,571 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:08:07,921 - root - INFO - Epoch: 18, learning rate: 0.0001, train loss: 0.3300
+2024-03-15 01:08:07,921 - root - INFO - train average_precision, 0.8376
+2024-03-15 01:08:07,921 - root - INFO - train roc_auc, 0.8918
+2024-03-15 01:08:07,922 - root - INFO - validate mrr, 0.8750
+2024-03-15 01:08:07,922 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:08:13,408 - root - INFO - Epoch: 19, learning rate: 0.0001, train loss: 0.3302
+2024-03-15 01:08:13,408 - root - INFO - train average_precision, 0.8494
+2024-03-15 01:08:13,408 - root - INFO - train roc_auc, 0.8932
+2024-03-15 01:08:13,409 - root - INFO - validate mrr, 0.8750
+2024-03-15 01:08:13,409 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:08:18,944 - root - INFO - Epoch: 20, learning rate: 0.0001, train loss: 0.3157
+2024-03-15 01:08:18,944 - root - INFO - train average_precision, 0.8629
+2024-03-15 01:08:18,944 - root - INFO - train roc_auc, 0.9031
+2024-03-15 01:08:18,944 - root - INFO - validate mrr, 0.9375
+2024-03-15 01:08:19,934 - root - INFO - test mrr, 0.9375
+2024-03-15 01:08:19,934 - root - INFO - save model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:08:19,938 - root - INFO - load model ./saved_models/DyGFormer/tgbl-synthetic/DyGFormer_seed0/DyGFormer_seed0.pkl
+2024-03-15 01:08:19,942 - root - INFO - get final performance on dataset tgbl-synthetic...
+2024-03-15 01:08:21,942 - root - INFO - validate mrr, 0.9375
+2024-03-15 01:08:21,942 - root - INFO - test mrr, 0.9375
+2024-03-15 01:08:21,943 - root - INFO - Run 1 cost 111.24 seconds.
